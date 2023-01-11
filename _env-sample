@@ -1,0 +1,8 @@
+# MongoDB credentials
+MONGO_URL = mongodb+srv://<userName>:<password>@floorplandb.bylbnv8.mongodb.net/agc?retryWrites=true&w=majority
+
+# Secret key 
+SECRET_KEY = 
+
+PORT = 
+
