@@ -1,0 +1,31 @@
+{
+  "name": "floor-plan_backend",
+  "version": "1.0.0",
+  "description": "Floor plan backend",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adrian52x/Floor-Plan_backend.git"
+  },
+  "author": "Adrian Enachi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/adrian52x/Floor-Plan_backend/issues"
+  },
+  "homepage": "https://github.com/adrian52x/Floor-Plan_backend#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "helmet": "^6.0.1",
+    "mongoose": "^6.8.3",
+    "morgan": "^1.10.0",
+    "socket.io": "^4.5.4"
+  }
+}
