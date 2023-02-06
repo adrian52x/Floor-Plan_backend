@@ -24,13 +24,16 @@ app.use(
 import cookieParser from "cookie-parser";
 app.use(cookieParser());
 
-// import UserRouter from './Routes/userRoutes.js';
-// import ParkingArea from './Routes/parkingAreaRoutes.js';
+
+import buildingRouter from './Routes/buildingRoutes.js';
+import objectRouter from './Routes//objectRoutes.js';
 
 
 app.use(express.json());
-// app.use(UserRouter);
-// app.use(ParkingArea);
+app.use(buildingRouter);
+app.use(objectRouter);
+
+
 
 app.use(helmet());
 app.use(morgan("tiny")); // display in console HTTP requests

@@ -1,1 +1,10 @@
-Hello
+building Objects convention
+
+Type: Meeting Room
+Name: <floor>.<number>
+
+Type: Printer Room
+Name: P<floor>.<number> (P3.1 / P4.3)
+
+Type: Desk
+Name: D<floor>.<number> (D0.01 / D3.16 / D4. 68)
