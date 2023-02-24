@@ -46,17 +46,20 @@ router.get("/api/building/:key", async (req, res) => {
 // Admin // Create a Building
 router.post("/api/building", async (req, res) => {
   try {
-    const { buildingName, location } = req.body;
+    const { name, lng, lat, location, floors } = req.body;
 
     // Create building in database
     const building = await Building.create({
-      buildingName: buildingName,
-      location: location
+      name: name,
+      lng: lng,
+      lat: lat,
+      location: location,
+      floors: floors
     });
 
     return res.status(201).json(building);
   } catch (err) {
-    console.log(err);
+    res.json({ message: err })
   }
 });
 

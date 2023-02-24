@@ -6,3 +6,5 @@ SECRET_KEY =
 
 PORT = 
 
+EMAIL_USER = 
+EMAIL_PASS = jfomjdsrdkipikvp

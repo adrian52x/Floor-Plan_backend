@@ -2,11 +2,15 @@ import mongoose from "mongoose";
 const { Schema, model } = mongoose;
 
 const buildingObjectSchema = new Schema({
-  name: { type: String, unique: true },
-  objectType: { type: String, default: null },
-  floor: { type: String, default: null },
+  name: { type: String, require: true},
+  objectType: { type: String, require: true},
+  floor: { type: Number, require: true},
+  building: { type: String, require: true},
   equipment: { type: String, default: null }
+}, {
+  index: { unique: true, partialFilterExpression: { namn: { $exists: true }, building: { $exists: true }, floor: { $exists: true }, objectType: { $exists: true } } }
 });
+
 
 const buildingObject = model("buildingObject", buildingObjectSchema);
 

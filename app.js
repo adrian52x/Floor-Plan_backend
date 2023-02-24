@@ -2,22 +2,20 @@ import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 
-
 const app = express();
 
-
 app.use(express.urlencoded({ extended: true }));
-
 
 
 import mongoose from "mongoose";
 import helmet from "helmet";
 import cors from "cors";
 import morgan from "morgan";
+
 app.use(
   cors({
     credentials: true,
-    origin: "http://localhost:8080"
+    origin: "http://localhost:5173"
   })
 );
 
@@ -26,12 +24,15 @@ app.use(cookieParser());
 
 
 import buildingRouter from './Routes/buildingRoutes.js';
-import objectRouter from './Routes//objectRoutes.js';
+import objectRouter from './Routes/objectRoutes.js';
+import emailService from './Routes/emailService.js'
+
 
 
 app.use(express.json());
 app.use(buildingRouter);
 app.use(objectRouter);
+app.use(emailService);
 
 
 

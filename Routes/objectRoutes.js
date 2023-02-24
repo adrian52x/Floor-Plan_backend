@@ -46,25 +46,68 @@ router.get("/api/object/:key", async (req, res) => {
 // Admin // Create an Object
 router.post("/api/object", async (req, res) => {
   try {
-    const { name, objectType, floor, equipment } = req.body;
+    const { name, objectType, floor, building, equipment } = req.body;
 
     // Create building in database
     const object = await Object.create({
       name: name,
       objectType: objectType,
       floor: floor,
+      building: building,
       equipment: equipment
     });
 
     return res.status(201).json(object);
   } catch (err) {
-    console.log(err);
+    res.json({ message: err })
   }
 });
 
 
 
+router.post('/api/manyObjects', async (req, res) => {
+  let count = 0;
+  console.log(req.body);
+  const objects = req.body;
 
+  // Validate that all required fields are present in each object
+  const missingFields = objects.filter(obj => !obj?.name || !obj?.objectType || obj?.floor === undefined || !obj?.building);
+  if (missingFields.length > 0) {
+    console.log(missingFields);
+    return res.status(400).json({ error: `Missing fields: ${missingFields.join(', ')}` });
+  }
+
+  // Check if objects already exist in the database
+  const updates = [];
+  const newObjects = [];
+  for (const obj of objects) {
+    const existingObj = await Object.findOne({ 
+      name: obj.name,
+      objectType: obj.objectType,
+      floor: obj.floor,
+      building: obj.building
+    });
+
+    if (existingObj) {
+      count++;
+      // Update the existing object
+      const update = Object.updateOne(
+        { _id: existingObj._id },
+        { $set: { equipment: obj.equipment } }
+      );
+      updates.push(update);
+    } else {
+      // Create a new object
+      const newObj = new Object(obj);
+      newObjects.push(newObj);
+    }
+  }
+
+  // Execute the updates and insertions
+  await Promise.all(updates);
+  const savedNewObjects = await Object.insertMany(newObjects);
+  res.status(200).json({ message: `${count} Objects already exist and have been updated`, savedNewObjects });
+});
 
 
 
