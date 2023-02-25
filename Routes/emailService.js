@@ -12,8 +12,8 @@ router.post('/api/sendmail', async (req, res) => {
             <h3>Contact details</h3>
             <ul>
                 <li>Name: ${req.body.fullName} </li>
-                <li>Email: ${req.body.email} </li>
                 <li>Subject: ${req.body.subject} </li>
+                <li>Type: ${req.body.type} | ${req.body.number}</li>
                 <li>Date & time: ${timeAndDate} </li>
             </ul>
             <h3>Message</h3>
