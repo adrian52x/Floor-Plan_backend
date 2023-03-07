@@ -46,7 +46,7 @@ router.post('/api/sendmail', async (req, res) => {
         console.log("Message sent: %s", info.messageId); 
 
     } catch (error) {
-        console.log(error);
+        res.status(400).json({ message: "something wrong" });
     }
   
 });

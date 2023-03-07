@@ -43,7 +43,7 @@ router.get("/api/building/:key", async (req, res) => {
 
 
 
-// Admin // Create a Building
+// Create a Building
 router.post("/api/building", async (req, res) => {
   try {
     const { name, lng, lat, location, floors } = req.body;

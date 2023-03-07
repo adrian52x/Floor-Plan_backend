@@ -43,7 +43,7 @@ router.get("/api/object/:key", async (req, res) => {
 
 
 
-// Admin // Create an Object
+// Create an Object
 router.post("/api/object", async (req, res) => {
   try {
     const { name, objectType, floor, building, equipment } = req.body;
@@ -59,12 +59,12 @@ router.post("/api/object", async (req, res) => {
 
     return res.status(201).json(object);
   } catch (err) {
-    res.json({ message: err })
+    res.status(400).json({ message: "something wrong" });
   }
 });
 
 
-
+// Create many Objects at once
 router.post('/api/manyObjects', async (req, res) => {
   let count = 0;
   console.log(req.body);
