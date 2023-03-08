@@ -23,6 +23,17 @@ router.get("/api/objects", async (req, res) => {
 });
 
 
+//Delete all objects
+router.delete("/api/objects", async (req, res) => {
+  try {
+    const result = await Object.deleteMany();
+    res.status(200).json({ message: `Deleted ${result.deletedCount} objects` });
+  } catch (error) {
+    res.status(400).json({ message: "Something went wrong" });
+  }
+});
+
+
 
 // Find an Object by name
 router.get("/api/object/:key", async (req, res) => {
