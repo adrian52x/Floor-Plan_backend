@@ -24,6 +24,13 @@ app.use(cookieParser());
 
 
 import buildingRouter from './Routes/buildingRoutes.js';
+import floorRouter from './Routes/floorRoutes.js'
+import departmentRouter from './Routes/departmentRoutes.js'
+import roomRouter from './Routes/roomRoutes.js'
+import instrumentRouter from './Routes/instrumentRoutes.js'
+import roomInstrumentRouter from './Routes/roomInstrumentRoutes.js'
+
+
 import objectRouter from './Routes/objectRoutes.js';
 import emailService from './Routes/emailService.js'
 
@@ -31,6 +38,12 @@ import emailService from './Routes/emailService.js'
 
 app.use(express.json());
 app.use(buildingRouter);
+app.use(floorRouter);
+app.use(departmentRouter);
+app.use(roomRouter);
+app.use(instrumentRouter);
+app.use(roomInstrumentRouter);
+
 app.use(objectRouter);
 app.use(emailService);
 
