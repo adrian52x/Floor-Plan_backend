@@ -2,6 +2,8 @@ import Router from "express";
 const router = Router();
 
 import RoomInstrument from "../Model/RoomInstrument.js";
+import Room from "../Model/Room.js";
+import Instrument from "../Model/Instrument.js";
 
 
 // Create a new RoomInstrument entry
@@ -26,14 +28,97 @@ router.post('/api/room-instruments', async (req, res) => {
   // Get all RoomInstrument entries
   router.get('/api/room-instruments', async (req, res) => {
     try {
-      const roomInstruments = await RoomInstrument.find();
+      const roomInstruments = await RoomInstrument.find()
+        .populate('roomId', 'name type')
+        .populate('instrumentId', 'name description');
+
+
+    // Map the results to create a new array with the modified objects
+    const modifiedRoomInstruments = roomInstruments.map(item => ({
+        _id: item._id,
+        roomName: item.roomId.name,
+        roomType: item.roomId.type,
+
+        instrumentName: item.instrumentId.name,
+        instrumentDesc: item.instrumentId.description
+    }));
+      
   
-      res.json(roomInstruments);
+      res.json(modifiedRoomInstruments);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Failed to retrieve RoomInstrument entries' });
     }
   });
+
+  // Get all Instruments associeted with a specific Room
+  router.get('/api/1room-instruments', async (req, res) => {
+    try {
+      const { roomName } = req.query;
+  
+      const room = await Room.findOne({ name: roomName });
+  
+      if (!room) {
+        return res.status(404).json({ error: 'Room not found' });
+      }
+  
+      const roomInstruments = await RoomInstrument.find({ roomId: room._id })
+        .populate('roomId', 'name type')
+        .populate('instrumentId', 'name description');        
+  
+      // Map the results to create a new array with the modified objects
+      const modifiedRoomInstruments = roomInstruments.map(item => ({
+        _id: item._id,
+        roomName: item.roomId.name,
+        roomType: item.roomId.type,
+        instrumentName: item.instrumentId.name,
+        instrumentDesc: item.instrumentId.description
+
+      }));
+  
+      res.json(modifiedRoomInstruments);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to retrieve RoomInstrument entries' });
+    }
+  });
+
+  // Get all Rooms associeted with a specific Instruments
+  router.get('/api/1instrument-rooms', async (req, res) => {
+    try {
+      const { instrumentName } = req.query;
+  
+      const instrument = await Instrument.findOne({ name: instrumentName });
+  
+      if (!instrument) {
+        return res.status(404).json({ error: 'Room not found' });
+      }
+  
+      const roomInstruments = await RoomInstrument.find({ instrumentId: instrument._id })
+        .populate('roomId', 'name type')
+        .populate('instrumentId', 'name description');        
+  
+      // Map the results to create a new array with the modified objects
+      const modifiedRoomInstruments = roomInstruments.map(item => ({
+        _id: item._id,
+        roomName: item.roomId.name,
+        roomType: item.roomId.type,
+        instrumentName: item.instrumentId.name,
+        instrumentDesc: item.instrumentId.description
+
+      }));
+  
+      res.json(modifiedRoomInstruments);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to retrieve RoomInstrument entries' });
+    }
+  });
+
+
+
+
+
   
   // Delete a RoomInstrument entry
   router.delete('/api/room-instruments/:id', async (req, res) => {
