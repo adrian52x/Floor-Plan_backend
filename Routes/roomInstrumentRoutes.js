@@ -66,8 +66,6 @@ router.post('/api/room-instruments', async (req, res) => {
         .populate('roomId', 'name type')
         .populate('instrumentId', 'name description');        
 
-		console.log(room);
-		console.log(roomInstruments);
 
       	// Extract instrument names into an array
 	  	const instruments = roomInstruments.map(item => ({
@@ -85,21 +83,31 @@ router.post('/api/room-instruments', async (req, res) => {
 		// 	// instrumentDesc: item.instrumentId.description
       	// }));
 
-		const modifiedRoomInstruments = roomInstruments.length > 0
-		  	? roomInstruments.map(item => ({
-				_id: item._id,
-				roomName: item.roomId.name,
-				roomType: item.roomId.type,
-				instruments: instruments
-			}))
-		  	: { 
-				_id: room._id,
-				roomName: room.name,
-				roomType: room.type,
-				instruments: []
-			};
+        const modifiedRoomInstruments = {
+            roomName: room.name,
+            roomType: room.type,
+            instruments: instruments
+        }
+
+		// const modifiedRoomInstruments = roomInstruments.length > 0
+		//   	? roomInstruments.map(item => ({
+		// 		_id: item._id,
+		// 		roomName: item.roomId.name,
+		// 		roomType: item.roomId.type,
+		// 		instruments: instruments
+		// 	}))
+		//   	: { 
+		// 		_id: room._id,
+		// 		roomName: room.name,
+		// 		roomType: room.type,
+		// 		instruments: []
+		// };
+
+        // const output = modifiedRoomInstruments.length > 0 ? modifiedRoomInstruments[0] : modifiedRoomInstruments    
+
+        console.log(modifiedRoomInstruments);
   
-      res.json(modifiedRoomInstruments[0]);
+      res.json(modifiedRoomInstruments);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Failed to retrieve RoomInstrument entries' });

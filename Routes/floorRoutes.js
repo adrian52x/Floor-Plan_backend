@@ -148,7 +148,7 @@ router.get('/api/floor', async (req, res) => {
     };
 
 
-    res.json({ formattedFloor });
+    res.json(formattedFloor);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to retrieve floor' });

@@ -8,10 +8,12 @@ import Room from "../Model/Room.js";
 router.post('/api/rooms', async (req, res) => {
     try {
       const { name, type, floor_id } = req.body;
+
+      const roomType = type || 'room';
   
       const room = new Room({
         name,
-        type,
+        type: roomType,
         floor_id
       });
   
