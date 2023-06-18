@@ -132,7 +132,7 @@ router.get('/api/floor', async (req, res) => {
     }
 
 
-    const departemnts = await Department.find({ floor_id: floor.id })
+    const departments = await Department.find({ floor_id: floor.id })
         .select('-floor_id -__v')
         .exec();
 
@@ -143,7 +143,7 @@ router.get('/api/floor', async (req, res) => {
     const formattedFloor = {
         _id: floor._id,
         level: floor.level,
-        departemnts: departemnts,
+        departments: departments,
         rooms: rooms
     };
 

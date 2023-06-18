@@ -15,7 +15,7 @@ import morgan from "morgan";
 app.use(
   cors({
     credentials: true,
-    origin: "http://localhost:5173"
+    origin: process.env.FRONTEND_IP
   })
 );
 
@@ -53,17 +53,36 @@ app.use(helmet());
 app.use(morgan("tiny")); // display in console HTTP requests
 
 
-mongoose.connect(process.env.MONGO_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}, err => {
-  if(err){
-    console.log("connection error: ", err);
-  }
-  else{
-    console.log("Connected to MongoDB successfully");
-  }
-}); 
+// mongoose.connect(process.env.MONGO_URL, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// }, err => {
+//   if(err){
+//     console.log("connection error: ", err);
+//   }
+//   else{
+//     console.log("Connected to MongoDB successfully");
+//   }
+// }); 
+
+const connectWithRetry = () => {
+  mongoose.connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  }, (err) => {
+    if (err) {
+      console.error('Connection error:', err);
+      console.log('Retrying connection in 5 seconds...');
+      setTimeout(connectWithRetry, 5000); // Retry after 5 seconds
+    } else {
+      console.log('Connected to MongoDB successfully');
+    }
+  });
+};
+
+// Initial connection attempt
+connectWithRetry();
+
 
 
 

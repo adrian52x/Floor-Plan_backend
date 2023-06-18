@@ -29,7 +29,9 @@ router.post('/api/rooms', async (req, res) => {
   // Get all Rooms
   router.get('/api/rooms', async (req, res) => {
     try {
-      const rooms = await Room.find();
+      const rooms = await Room.find()
+        .select('-__v')
+        .exec();
   
       res.json(rooms);
     } catch (error) {
@@ -57,27 +59,28 @@ router.post('/api/rooms', async (req, res) => {
   });
   
   // Update a Room
-  router.put('/api/rooms/:id', async (req, res) => {
-    try {
-      const { id } = req.params;
-      const { name, type, floor_id } = req.body;
-  
-      const room = await Room.findByIdAndUpdate(
-        id,
-        { name, type, floor_id },
-        { new: true }
-      );
-  
-      if (!room) {
-        return res.status(404).json({ error: 'Room not found' });
-      }
-  
-      res.json(room);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Failed to update Room' });
+router.patch('/api/rooms/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateFields = { ...req.body }; // Copy all properties from req.body
+
+    const room = await Room.findByIdAndUpdate(
+      id,
+      updateFields,
+      { new: true }
+    );
+
+    if (!room) {
+      return res.status(404).json({ error: 'Room not found' });
     }
-  });
+
+    res.json(room);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to update Room' });
+  }
+});
+
   
   // Delete a Room
   router.delete('/api/rooms/:id', async (req, res) => {

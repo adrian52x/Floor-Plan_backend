@@ -5,6 +5,12 @@ const roomSchema = new Schema({
     name: { type: mongoose.Schema.Types.Mixed, required: true },
     type: { type: String, enum: ['meetingRoom', 'printerRoom', 'office', 'lab', 'room'] },
     floor_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Floor', required: true },
+    position: [{
+        left: { type: Number},
+        top: { type: Number},
+        width: { type: Number},
+        height: { type: Number}
+      }]
 });
 
 const Room = model("Room", roomSchema);
