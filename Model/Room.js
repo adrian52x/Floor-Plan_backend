@@ -10,7 +10,7 @@ const roomSchema = new Schema({
         top: { type: Number},
         width: { type: Number},
         height: { type: Number}
-      }]
+    }]
 });
 
 const Room = model("Room", roomSchema);

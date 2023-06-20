@@ -7,14 +7,15 @@ import Room from "../Model/Room.js";
 // Create a new Room
 router.post('/api/rooms', async (req, res) => {
     try {
-      const { name, type, floor_id } = req.body;
+      const { name, type, floor_id, position } = req.body;
 
       const roomType = type || 'room';
   
       const room = new Room({
         name,
         type: roomType,
-        floor_id
+        floor_id,
+        position
       });
   
       const savedRoom = await room.save();

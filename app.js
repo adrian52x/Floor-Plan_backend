@@ -53,17 +53,9 @@ app.use(helmet());
 app.use(morgan("tiny")); // display in console HTTP requests
 
 
-// mongoose.connect(process.env.MONGO_URL, {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// }, err => {
-//   if(err){
-//     console.log("connection error: ", err);
-//   }
-//   else{
-//     console.log("Connected to MongoDB successfully");
-//   }
-// }); 
+// Set strictQuery to false to prepare for the change in Mongoose 7
+mongoose.set('strictQuery', false);
+console.log('Mongoose version:', mongoose.version);
 
 const connectWithRetry = () => {
   mongoose.connect(process.env.MONGO_URL, {
@@ -82,6 +74,7 @@ const connectWithRetry = () => {
 
 // Initial connection attempt
 connectWithRetry();
+
 
 
 

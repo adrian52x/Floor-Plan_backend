@@ -55,22 +55,22 @@ router.post('/api/departments', async (req, res) => {
   });
   
   // Update a Department
-  router.put('/api/departments/:id', async (req, res) => {
+  router.patch('/api/departments/:id', async (req, res) => {
     try {
-      const { id } = req.params;
-      const { name, description } = req.body;
-  
-      const department = await Department.findByIdAndUpdate(
-        id,
-        { name, description },
-        { new: true }
-      );
-  
-      if (!department) {
-        return res.status(404).json({ error: 'Department not found' });
-      }
-  
-      res.json(department);
+        const { id } = req.params;
+        const updateFields = { ...req.body }; // Copy all properties from req.body
+    
+        const department = await Department.findByIdAndUpdate(
+            id,
+            updateFields,
+            { new: true }
+        );
+    
+        if (!department) {
+            return res.status(404).json({ error: 'Department not found' });
+        }
+    
+        res.json(department);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Failed to update Department' });
