@@ -29,7 +29,7 @@ import departmentRouter from './Routes/departmentRoutes.js'
 import roomRouter from './Routes/roomRoutes.js'
 import instrumentRouter from './Routes/instrumentRoutes.js'
 import roomInstrumentRouter from './Routes/roomInstrumentRoutes.js'
-
+import userRouter from './Routes/userRoutes.js'
 
 import objectRouter from './Routes/objectRoutes.js';
 import emailService from './Routes/emailService.js'
@@ -43,6 +43,7 @@ app.use(departmentRouter);
 app.use(roomRouter);
 app.use(instrumentRouter);
 app.use(roomInstrumentRouter);
+app.use(userRouter);
 
 app.use(objectRouter);
 app.use(emailService);
@@ -58,18 +59,18 @@ mongoose.set('strictQuery', false);
 console.log('Mongoose version:', mongoose.version);
 
 const connectWithRetry = () => {
-  mongoose.connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  }, (err) => {
-    if (err) {
-      console.error('Connection error:', err);
-      console.log('Retrying connection in 5 seconds...');
-      setTimeout(connectWithRetry, 5000); // Retry after 5 seconds
-    } else {
-      console.log('Connected to MongoDB successfully');
-    }
-  });
+    mongoose.connect(process.env.MONGO_URL, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    }, (err) => {
+        if (err) {
+        console.error('Connection error:', err);
+        console.log('Retrying connection in 5 seconds...');
+        setTimeout(connectWithRetry, 5000); // Retry after 5 seconds
+        } else {
+        console.log('Connected to MongoDB successfully');
+        }
+    });
 };
 
 // Initial connection attempt
