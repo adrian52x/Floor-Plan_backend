@@ -3,8 +3,6 @@ import jwt from "jsonwebtoken";
 
 const verifyToken = (req, res, next) => {
     const cookie = req.cookies["AGC"];
-  
-    
 
     if (!cookie) {
       return res.status(403).json({ message: "Unauthenticated"});
@@ -15,10 +13,10 @@ const verifyToken = (req, res, next) => {
         req.user = decoded;
 
 
-        console.log(req.params.userName);
+        console.log(req.query);
 
         // Checking for current user if userName is the same
-        if(req.user.userName != req.params.userName){
+        if(req.user.userName != req.query.userName){
             return res.status(401).send("unauthorized");
         }else{
             next(); 
@@ -45,6 +43,7 @@ const adminOnly = (req, res, next) => {
         const decoded = jwt.verify(cookie, process.env.SECRET_KEY);
         req.user = decoded;
 
+        console.log(req.user);
 
         // Checking if admin
         if( !(req.user.isAdmin === true ) ){

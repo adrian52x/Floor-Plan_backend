@@ -9,7 +9,7 @@ import { verifyToken, adminOnly } from "../middleware.js";
 
 
 // Get all users
-router.get("/api/users", verifyToken, async (req, res) => {
+router.get("/api/users", adminOnly, async (req, res) => {
     try {
         const users = await User.find()
         res.status(200).json(users) 
@@ -83,13 +83,11 @@ router.post("/api/login", async (req, res) => {
     
         if (user && bcrypt.compare(password, user.password)) {
             // Create token
-            const token = jwt.sign({ userId: user._id, userName }, process.env.SECRET_KEY, { expiresIn: "5h"});
+            const token = jwt.sign({ userId: user._id, userName, isAdmin: user.isAdmin }, process.env.SECRET_KEY, { expiresIn: "5h"});
 
             // create cookie
             res.cookie('AGC', token, {
-                httpOnly: true,
                 maxAge: 5 * 60 * 60 * 1000 // 5 hours
-                
             })
     
             
