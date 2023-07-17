@@ -51,7 +51,7 @@ router.post('/api/room-instruments', async (req, res) => {
 			roomId: item.roomId._id,
 			roomName: item.roomId.name,
 			roomType: item.roomId.type,
-			instrumentName: item.instrumentId.name,
+			name: item.instrumentId.name,
 			instrumentDesc: item.instrumentId.description,
 			floorId: room.floor_id, // Include the floorId from the room document
 			};
