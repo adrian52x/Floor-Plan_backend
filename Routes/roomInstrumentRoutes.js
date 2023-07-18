@@ -10,6 +10,14 @@ import Instrument from "../Model/Instrument.js";
 router.post('/api/room-instruments', async (req, res) => {
     try {
       const { roomId, instrumentId } = req.body;
+
+    // Check if room and instrument exist
+    const roomExists = await Room.exists({ _id: roomId });
+    const instrumentExists = await Instrument.exists({ _id: instrumentId });
+
+    if (!roomExists || !instrumentExists) {
+      return res.status(404).json({ error: 'Room or instrument not found' });
+    }
   
       const roomInstrument = new RoomInstrument({
         roomId,

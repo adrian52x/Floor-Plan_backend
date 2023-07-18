@@ -3,6 +3,7 @@ const router = Router();
 
 
 import Room from "../Model/Room.js";
+import RoomInstrument from "../Model/RoomInstrument.js";
 
 // Create a new Room
 router.post('/api/rooms', async (req, res) => {
@@ -10,6 +11,13 @@ router.post('/api/rooms', async (req, res) => {
       const { name, type, floor_id, position } = req.body;
 
       const roomType = type || 'room';
+
+	  // Check if the name is already in use
+	  const existingRoom = await Room.findOne({ name });
+
+	  if (existingRoom) {
+		return res.status(400).json({ error: 'Room name already in use' });
+	  }
   
       const room = new Room({
         name,
@@ -65,6 +73,19 @@ router.patch('/api/rooms/:id', async (req, res) => {
     const { id } = req.params;
     const updateFields = { ...req.body }; // Copy all properties from req.body
 
+
+	const originalRoom = await Room.findById(id);
+
+	const isSame = ( 
+		updateFields.name === originalRoom.name && 
+    	updateFields.type === originalRoom.type && 
+     	JSON.stringify(updateFields.position) === JSON.stringify(originalRoom.position)
+	)
+	if (isSame) {
+		console.log("is the same");
+		return res.sendStatus(204); // No changes were made to the room
+	}
+
     const room = await Room.findByIdAndUpdate(
       id,
       updateFields,
@@ -74,6 +95,12 @@ router.patch('/api/rooms/:id', async (req, res) => {
     if (!room) {
       return res.status(404).json({ error: 'Room not found' });
     }
+
+	
+	console.log("originalData", originalRoom);
+    console.log("updatedData", updateFields);
+
+	
 
     res.json(room);
   } catch (error) {
@@ -87,6 +114,9 @@ router.patch('/api/rooms/:id', async (req, res) => {
   router.delete('/api/rooms/:id', async (req, res) => {
     try {
       const { id } = req.params;
+
+	  // Delete the RoomInstruments entries associated with the Room
+	  await RoomInstrument.deleteMany({ roomId: id });
   
       const room = await Room.findByIdAndDelete(id);
   
