@@ -59,6 +59,20 @@ router.post('/api/departments', async (req, res) => {
     try {
         const { id } = req.params;
         const updateFields = { ...req.body }; // Copy all properties from req.body
+
+        console.log("updateFields", updateFields);
+
+        const originalDepartment = await Department.findById(id);
+
+        const isSame = ( 
+          updateFields.name === originalDepartment.name && 
+          updateFields.color === originalDepartment.color && 
+           JSON.stringify(updateFields.position) === JSON.stringify(originalDepartment.position)
+      )
+      if (isSame) {
+        console.log("is the same");
+        return res.sendStatus(204); // No changes were made to the room
+      }
     
         const department = await Department.findByIdAndUpdate(
             id,
@@ -69,7 +83,8 @@ router.post('/api/departments', async (req, res) => {
         if (!department) {
             return res.status(404).json({ error: 'Department not found' });
         }
-    
+        
+        console.log("after update", department);
         res.json(department);
     } catch (error) {
       console.error(error);

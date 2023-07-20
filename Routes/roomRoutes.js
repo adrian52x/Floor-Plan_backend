@@ -77,7 +77,7 @@ router.patch('/api/rooms/:id', async (req, res) => {
 	const originalRoom = await Room.findById(id);
 
 	const isSame = ( 
-		updateFields.name === originalRoom.name && 
+		  updateFields.name === originalRoom.name && 
     	updateFields.type === originalRoom.type && 
      	JSON.stringify(updateFields.position) === JSON.stringify(originalRoom.position)
 	)

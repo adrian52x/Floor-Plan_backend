@@ -4,7 +4,7 @@ const { Schema, model } = mongoose;
 const departSchema = new Schema({
     name: { type: String, required: true },
     description: { type: String, required: false },
-    color: { type: String, required: true },
+    color: { type: String, required: false },
     floor_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Floor', required: true },
     position: [{
         left: { type: Number},

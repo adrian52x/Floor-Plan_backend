@@ -106,7 +106,7 @@ router.post('/api/room-instruments', async (req, res) => {
             instruments: instruments
         }
 
-        console.log(modifiedRoomInstruments);
+        //console.log(modifiedRoomInstruments);
   
       res.json(modifiedRoomInstruments);
     } catch (error) {
@@ -169,6 +169,36 @@ router.post('/api/room-instruments', async (req, res) => {
       console.error(error);
       res.status(500).json({ error: 'Failed to delete RoomInstrument entry' });
     }
-});
+  });
+
+  // Delete by instrumentName and roomName
+  router.delete('/api/room-instruments', async (req, res) => {
+    try {
+      const { instrumentName, roomName } = req.body;
+  
+      //console.log("instrumentName", instrumentName);
+      //console.log("roomName", roomName);
+      
+      // Find the Room & Instrument  with the given instrumentName and roomName
+      const room = await Room.findOne({name: roomName})
+      const instrument = await Instrument.findOne({name: instrumentName})
+      //console.log(room);
+      //console.log(instrument);
+
+      const roomInstrument = await RoomInstrument.findOne({ roomId: room._id, instrumentId: instrument._id });
+  
+      //console.log(roomInstrument);
+      if (!roomInstrument) {
+        return res.status(404).json({ error: 'RoomInstrument entry not found' });
+      }
+  
+      await RoomInstrument.findByIdAndDelete(roomInstrument._id);
+  
+      res.json({ message: 'RoomInstrument entry deleted' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to delete RoomInstrument entry' });
+    }
+  });
   
 export default router;
