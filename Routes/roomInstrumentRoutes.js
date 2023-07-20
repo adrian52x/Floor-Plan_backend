@@ -18,6 +18,13 @@ router.post('/api/room-instruments', async (req, res) => {
     if (!roomExists || !instrumentExists) {
       return res.status(404).json({ error: 'Room or instrument not found' });
     }
+
+    // Check if an instrument with the same ID already exists in the room
+    const instrumentAlreadyExists = await RoomInstrument.exists({ roomId, instrumentId });
+
+    if (instrumentAlreadyExists) {
+      return res.status(400).json({ error: 'This instrument already exists in the room' });
+    }
   
       const roomInstrument = new RoomInstrument({
         roomId,
@@ -95,12 +102,14 @@ router.post('/api/room-instruments', async (req, res) => {
 
       	// Extract instrument names into an array
 	  	const instruments = roomInstruments.map(item => ({
-			name: item.instrumentId.name,
-			description: item.instrumentId.description
+        _id: item.instrumentId._id,
+        name: item.instrumentId.name,
+        description: item.instrumentId.description
 	  	})); 
 
 
         const modifiedRoomInstruments = {
+            roomId: room._id,
             roomName: room.name,
             roomType: room.type,
             instruments: instruments
@@ -171,21 +180,21 @@ router.post('/api/room-instruments', async (req, res) => {
     }
   });
 
-  // Delete by instrumentName and roomName
+  // Delete by instrumentId and roomId
   router.delete('/api/room-instruments', async (req, res) => {
     try {
-      const { instrumentName, roomName } = req.body;
+      const { instrumentId, roomId } = req.body;
   
       //console.log("instrumentName", instrumentName);
       //console.log("roomName", roomName);
       
       // Find the Room & Instrument  with the given instrumentName and roomName
-      const room = await Room.findOne({name: roomName})
-      const instrument = await Instrument.findOne({name: instrumentName})
+      //const room = await Room.findById(roomId);
+      //const instrument = await Instrument.findById(instrumentId);
       //console.log(room);
       //console.log(instrument);
 
-      const roomInstrument = await RoomInstrument.findOne({ roomId: room._id, instrumentId: instrument._id });
+      const roomInstrument = await RoomInstrument.findOne({ roomId: roomId, instrumentId: instrumentId });
   
       //console.log(roomInstrument);
       if (!roomInstrument) {

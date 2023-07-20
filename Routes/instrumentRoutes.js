@@ -8,6 +8,13 @@ import Instrument from "../Model/Instrument.js";
 router.post('/api/instruments', async (req, res) => {
     try {
       const { name, description } = req.body;
+
+    // Check if the name is already in use
+	  const existingInstrument = await Instrument.findOne({ name });
+
+	  if (existingInstrument) {
+		  return res.status(400).json({ error: 'This Instrument already exists' });
+	  }
   
       const instrument = new Instrument({
         name,
