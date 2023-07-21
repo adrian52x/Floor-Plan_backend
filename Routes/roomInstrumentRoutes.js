@@ -23,7 +23,7 @@ router.post('/api/room-instruments', async (req, res) => {
     const instrumentAlreadyExists = await RoomInstrument.exists({ roomId, instrumentId });
 
     if (instrumentAlreadyExists) {
-      return res.status(400).json({ error: 'This instrument already exists in the room' });
+      return res.status(400).json({ error: 'This instrument already exists in this room' });
     }
   
       const roomInstrument = new RoomInstrument({
