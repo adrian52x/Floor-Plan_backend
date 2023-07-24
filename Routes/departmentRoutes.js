@@ -8,6 +8,13 @@ import Department from "../Model/Department.js";
 router.post('/api/departments', async (req, res) => {
     try {
       const { name, description, floor_id } = req.body;
+
+      // Check if the name and floor_id combination is already in use
+      const existingDepart = await Department.findOne({ name, floor_id });
+
+      if (existingDepart) {
+        return res.status(400).json({ error: `Department '${name}' already exists on this floor` });
+      }
   
       const department = new Department({
         name,
