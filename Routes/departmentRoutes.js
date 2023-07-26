@@ -7,19 +7,21 @@ import Department from "../Model/Department.js";
 // Create a new Department
 router.post('/api/departments', async (req, res) => {
     try {
-      const { name, description, floor_id } = req.body;
+      const { name, description, color, floor_id, position } = req.body;
 
       // Check if the name and floor_id combination is already in use
       const existingDepart = await Department.findOne({ name, floor_id });
 
       if (existingDepart) {
-        return res.status(400).json({ error: `Department '${name}' already exists on this floor` });
+        return res.status(400).json({ error: `Department - '${name}' already exists on this floor` });
       }
   
       const department = new Department({
         name,
         description,
-        floor_id
+        color,
+        floor_id,
+        position
       });
   
       const savedDepartment = await department.save();
@@ -77,7 +79,6 @@ router.post('/api/departments', async (req, res) => {
            JSON.stringify(updateFields.position) === JSON.stringify(originalDepartment.position)
       )
       if (isSame) {
-        console.log("is the same");
         return res.sendStatus(204); // No changes were made to the room
       }
     

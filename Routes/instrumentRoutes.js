@@ -3,6 +3,7 @@ const router = Router();
 
 
 import Instrument from "../Model/Instrument.js";
+import RoomInstrument from "../Model/RoomInstrument.js";
 
 // Create a new Instrument
 router.post('/api/instruments', async (req, res) => {
@@ -61,14 +62,24 @@ router.post('/api/instruments', async (req, res) => {
   });
   
   // Update an Instrument
-  router.put('/api/instruments/:id', async (req, res) => {
+  router.patch('/api/instruments/:id', async (req, res) => {
     try {
       const { id } = req.params;
-      const { name, description } = req.body;
+      const updateFields = { ...req.body }; // Copy all properties from req.body
+
+
+	    const originalInstrument = await Instrument.findById(id);
+
+      const isSame = ( 
+        updateFields.name === originalInstrument.name )
+      if (isSame) {
+        console.log("is the same");
+        return res.sendStatus(204); // No changes were made to the instrument
+      }
   
       const instrument = await Instrument.findByIdAndUpdate(
         id,
-        { name, description },
+        updateFields,
         { new: true }
       );
   
@@ -87,6 +98,9 @@ router.post('/api/instruments', async (req, res) => {
   router.delete('/api/instruments/:id', async (req, res) => {
     try {
       const { id } = req.params;
+
+      // Delete the RoomInstruments entries associated with the Instrument
+	    await RoomInstrument.deleteMany({ instrumentId: id });
   
       const instrument = await Instrument.findByIdAndDelete(id);
   

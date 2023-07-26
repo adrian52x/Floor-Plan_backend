@@ -12,11 +12,11 @@ router.post('/api/rooms', async (req, res) => {
 
       const roomType = type || 'room';
 
-	  // Check if the name is already in use
-	  const existingRoom = await Room.findOne({ name });
+	  // Check if the name and floor_id combination is already in use
+	  const existingRoom = await Room.findOne({ name, floor_id });
 
 	  if (existingRoom) {
-		return res.status(400).json({ error: 'Room name already in use' });
+		return res.status(400).json({ error: `Room - '${name}' already exists on this floor` });
 	  }
   
       const room = new Room({
@@ -74,17 +74,16 @@ router.patch('/api/rooms/:id', async (req, res) => {
     const updateFields = { ...req.body }; // Copy all properties from req.body
 
 
-	const originalRoom = await Room.findById(id);
+	  const originalRoom = await Room.findById(id);
 
-	const isSame = ( 
-		  updateFields.name === originalRoom.name && 
-    	updateFields.type === originalRoom.type && 
-     	JSON.stringify(updateFields.position) === JSON.stringify(originalRoom.position)
-	)
-	if (isSame) {
-		console.log("is the same");
-		return res.sendStatus(204); // No changes were made to the room
-	}
+    const isSame = ( 
+        updateFields.name === originalRoom.name && 
+        updateFields.type === originalRoom.type && 
+        JSON.stringify(updateFields.position) === JSON.stringify(originalRoom.position)
+    )
+    if (isSame) {
+      return res.sendStatus(204); // No changes were made to the room
+    }
 
     const room = await Room.findByIdAndUpdate(
       id,
@@ -96,11 +95,6 @@ router.patch('/api/rooms/:id', async (req, res) => {
       return res.status(404).json({ error: 'Room not found' });
     }
 
-	
-	console.log("originalData", originalRoom);
-    console.log("updatedData", updateFields);
-
-	
 
     res.json(room);
   } catch (error) {
