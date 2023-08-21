@@ -1,17 +1,13 @@
-DOCPH1306 649227fc4bcc22d68065a36b added 
-DOCPH1408 649228054bcc22d68065a36d added
-DOCPH0067 6492280e4bcc22d68065a36f added
-DOCPH4324 649228174bcc22d68065a371 added
-DOCPH1396 649228204bcc22d68065a373 added
-DOCPH1409 649228264bcc22d68065a375 added
-DOCPH1410 6492282e4bcc22d68065a377 added
-DOCPH1328 649228354bcc22d68065a379 added
-DOCPH0079 649228484bcc22d68065a37b added
-CPH_printer_83B_C01 6492284f4bcc22d68065a37d added
-CPH_printer_83B_A23 649228574bcc22d68065a37f added
-CPH_printer_83B_A24 6492285f4bcc22d68065a381 added
-CPH_printer_83B_B01 649228664bcc22d68065a383 added
+for windows:
 
-PORT_A1 6492289a4bcc22d68065a385 added
-PORT_B2 649228a44bcc22d68065a387 added
-PORT_C3 649228ac4bcc22d68065a389 added
+"scripts": {
+    "dev": "set NODE_ENV=development && nodemon app.js",
+    "start": "set NODE_ENV=production && nodemon app.js"
+},
+
+for linux:
+
+"scripts": {
+    "dev": "NODE_ENV=development nodemon app.js",
+    "start": "NODE_ENV=production nodemon app.js"
+},

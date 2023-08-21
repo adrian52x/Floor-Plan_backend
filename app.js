@@ -4,25 +4,12 @@ import express from "express";
 
 const app = express();
 
-app.use(express.urlencoded({ extended: true }));
-
 
 import mongoose from "mongoose";
 import helmet from "helmet";
 import cors from "cors";
 import morgan from "morgan";
-
-app.use(
-  cors({
-    credentials: true,
-    origin: process.env.FRONTEND_IP
-  })
-);
-
 import cookieParser from "cookie-parser";
-app.use(cookieParser());
-
-
 import buildingRouter from './Routes/buildingRoutes.js';
 import floorRouter from './Routes/floorRoutes.js'
 import departmentRouter from './Routes/departmentRoutes.js'
@@ -31,11 +18,38 @@ import instrumentRouter from './Routes/instrumentRoutes.js'
 import roomInstrumentRouter from './Routes/roomInstrumentRoutes.js'
 import userRouter from './Routes/userRoutes.js'
 
+
 import objectRouter from './Routes/objectRoutes.js';
 import emailService from './Routes/emailService.js'
 
 
+let mongoURL;
+let frontendIP;
+let backendIP;
 
+
+if (process.env.NODE_ENV.trim() === 'production') {
+  mongoURL = process.env.MONGO_PROD_URL;
+  frontendIP = process.env.PROD_FRONTEND_IP;
+  backendIP = process.env.PROD_BACKEND_IP;
+} else {
+  mongoURL = process.env.MONGO_DEV_URL;
+  frontendIP = process.env.DEV_FRONTEND_IP;
+  backendIP = process.env.DEV_BACKEND_IP;
+
+  app.use(morgan("tiny")); // display in console HTTP requests
+}
+
+
+app.use(
+  cors({
+    credentials: true,
+    origin: frontendIP
+  })
+);
+
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(express.json());
 app.use(buildingRouter);
 app.use(floorRouter);
@@ -49,17 +63,18 @@ app.use(objectRouter);
 app.use(emailService);
 
 
-
 app.use(helmet());
-app.use(morgan("tiny")); // display in console HTTP requests
+
+
 
 
 // Set strictQuery to false to prepare for the change in Mongoose 7
 mongoose.set('strictQuery', false);
 console.log('Mongoose version:', mongoose.version);
+//console.log(mongoURL);
 
 const connectWithRetry = () => {
-    mongoose.connect(process.env.MONGO_URL, {
+    mongoose.connect(mongoURL, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     }, (err) => {
@@ -80,6 +95,6 @@ connectWithRetry();
 
 
 
-app.listen(process.env.PORT, () => {
- console.log(`Server is listening on port ${process.env.PORT}`);
+app.listen(process.env.PORT, backendIP, () => {
+ console.log(`Server running: ${backendIP} : ${process.env.PORT}, Environment: ${process.env.NODE_ENV}`);
 });

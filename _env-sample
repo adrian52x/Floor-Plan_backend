@@ -1,13 +1,20 @@
 # MongoDB credentials
-MONGO_URL = mongodb+srv://<userName>:<password>@floorplandb.bylbnv8.mongodb.net/agc?retryWrites=true&w=majority
+MONGO_DEV_URL = 
+
+MONGO_PROD_URL = 
 
 # Secret key 
 SECRET_KEY = 
-
-PORT = 
-
 EMAIL_USER = 
 EMAIL_PASS = jfomjdsrdkipikvp
 
+NODE_ENV =  n/a
 
-FRONTEND_IP = 
+# IPs & PORT
+PORT = 5000
+
+DEV_FRONTEND_IP = http://localhost:3000 
+DEV_BACKEND_IP = localhost
+
+PROD_FRONTEND_IP = 
+PROD_BACKEND_IP = 
