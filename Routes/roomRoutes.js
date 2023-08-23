@@ -10,8 +10,6 @@ router.post('/api/rooms', async (req, res) => {
     try {
       const { name, type, floor_id, position } = req.body;
 
-      const roomType = type || 'room';
-
 	  // Check if the name and floor_id combination is already in use
 	  const existingRoom = await Room.findOne({ name, floor_id });
 
@@ -21,7 +19,7 @@ router.post('/api/rooms', async (req, res) => {
   
       const room = new Room({
         name,
-        type: roomType,
+        type,
         floor_id,
         position
       });

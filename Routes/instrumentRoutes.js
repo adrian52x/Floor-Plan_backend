@@ -71,7 +71,9 @@ router.post('/api/instruments', async (req, res) => {
 	    const originalInstrument = await Instrument.findById(id);
 
       const isSame = ( 
-        updateFields.name === originalInstrument.name )
+        updateFields.name === originalInstrument.name &&
+        updateFields.description === originalInstrument.description
+      )
       if (isSame) {
         console.log("is the same");
         return res.sendStatus(204); // No changes were made to the instrument

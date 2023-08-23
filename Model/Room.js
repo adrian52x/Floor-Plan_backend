@@ -3,7 +3,7 @@ const { Schema, model } = mongoose;
 
 const roomSchema = new Schema({
     name: { type: mongoose.Schema.Types.Mixed, required: true },
-    type: { type: String, enum: ['meetingRoom', 'printerRoom', 'office', 'lab', 'room'] },
+    type: { type: String },
     floor_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Floor', required: true },
     position: [{
         left: { type: Number},
