@@ -3,7 +3,7 @@ const { Schema, model } = mongoose;
 
 const instrumentSchema = new Schema({
     name: { type: String, required: true },
-    assetId: { type: String, required: true }, 
+    bmram: { type: String, required: true }, 
     lansweeper: { type: String, required: true },
     actionRequired: { type: Boolean, required: false, default: false },
     description: { type: String, required: false },

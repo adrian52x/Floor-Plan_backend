@@ -97,13 +97,16 @@ router.post('/api/room-instruments', async (req, res) => {
   
       const roomInstruments = await RoomInstrument.find({ roomId: room._id })
         .populate('roomId', 'name type')
-        .populate('instrumentId', 'name description');        
+        .populate('instrumentId', 'name bmram lansweeper actionRequired description');        
 
 
       	// Extract instrument names into an array
 	  	const instruments = roomInstruments.map(item => ({
         _id: item.instrumentId._id,
         name: item.instrumentId.name,
+        bmram: item.instrumentId.bmram,
+        lansweeper: item.instrumentId.lansweeper,
+        actionRequired: item.instrumentId.actionRequired,
         description: item.instrumentId.description
 	  	})); 
 

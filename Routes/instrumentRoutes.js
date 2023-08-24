@@ -8,7 +8,7 @@ import RoomInstrument from "../Model/RoomInstrument.js";
 // Create a new Instrument
 router.post('/api/instruments', async (req, res) => {
     try {
-      const { name, assetId, lansweeper, description } = req.body;
+      const { name, bmram, lansweeper, description } = req.body;
 
     // Check if the name is already in use
 	  const existingInstrument = await Instrument.findOne({ name });
@@ -20,7 +20,7 @@ router.post('/api/instruments', async (req, res) => {
       const instrument = new Instrument({
         name,
         description,
-        assetId,
+        bmram,
         lansweeper
       });
   
@@ -75,7 +75,7 @@ router.post('/api/instruments', async (req, res) => {
       const isSame = ( 
         updateFields.name === originalInstrument.name &&
         updateFields.lansweeper === originalInstrument.lansweeper &&
-        updateFields.assetId === originalInstrument.assetId &&
+        updateFields.bmram === originalInstrument.bmram &&
         updateFields.description === originalInstrument.description
       )
       if (isSame) {
