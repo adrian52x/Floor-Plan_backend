@@ -7,7 +7,10 @@ const instrumentSchema = new Schema({
     lansweeper: { type: String, required: true },
     actionRequired: { type: Boolean, required: false, default: false },
     description: { type: String, required: false },
+    room_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Room', required: false }
 });
+
+
 
 const Instrument = model("Instrument", instrumentSchema);
 

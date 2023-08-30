@@ -4,6 +4,8 @@ const router = Router();
 import RoomInstrument from "../Model/RoomInstrument.js";
 import Room from "../Model/Room.js";
 import Instrument from "../Model/Instrument.js";
+import PC from "../Model/PC.js";
+import NetworkPoint from "../Model/NetworkPoint.js";
 
 
 // Create a new RoomInstrument entry
@@ -84,48 +86,56 @@ router.post('/api/room-instruments', async (req, res) => {
     }
   });
 
-  // Get all Instruments associeted with a specific Room
-  router.get('/api/1room-instruments', async (req, res) => {
-    try {
-      const { roomName } = req.query;
+  // // Get all Instruments/PCs/Ports associeted with a specific Room
+  // router.get('/api/1room-instruments', async (req, res) => {
+  //   try {
+  //     const { roomName } = req.query;
   
-      const room = await Room.findOne({ name: roomName });
+  //     const room = await Room.findOne({ name: roomName });
   
-      if (!room) {
-        return res.status(404).json({ error: 'Room not found' });
-      }
+  //     if (!room) {
+  //       return res.status(404).json({ error: 'Room not found' });
+  //     }
+
+  //     const pcs = await PC.find({ room_id: room._id})
+  //       .select('-room_id -__v')
+
+  //     const ports = await NetworkPoint.find({ room_id: room._id })
+  //       .select('-room_id -__v')  
   
-      const roomInstruments = await RoomInstrument.find({ roomId: room._id })
-        .populate('roomId', 'name type')
-        .populate('instrumentId', 'name bmram lansweeper actionRequired description');        
+  //     const roomInstruments = await RoomInstrument.find({ roomId: room._id })
+  //       .populate('roomId', 'name type')
+  //       .populate('instrumentId', 'name bmram lansweeper actionRequired description');        
 
 
-      	// Extract instrument names into an array
-	  	const instruments = roomInstruments.map(item => ({
-        _id: item.instrumentId._id,
-        name: item.instrumentId.name,
-        bmram: item.instrumentId.bmram,
-        lansweeper: item.instrumentId.lansweeper,
-        actionRequired: item.instrumentId.actionRequired,
-        description: item.instrumentId.description
-	  	})); 
+  //     	// Extract instrument names into an array
+	//   	const instruments = roomInstruments.map(item => ({
+  //       _id: item.instrumentId._id,
+  //       name: item.instrumentId.name,
+  //       bmram: item.instrumentId.bmram,
+  //       lansweeper: item.instrumentId.lansweeper,
+  //       actionRequired: item.instrumentId.actionRequired,
+  //       description: item.instrumentId.description
+	//   	})); 
 
 
-        const modifiedRoomInstruments = {
-            roomId: room._id,
-            roomName: room.name,
-            roomType: room.type,
-            instruments: instruments
-        }
+  //       const modifiedRoomInstruments = {
+  //           roomId: room._id,
+  //           roomName: room.name,
+  //           roomType: room.type,
+  //           instruments: instruments,
+  //           PCs: pcs,
+  //           netWorkPorts: ports
+  //       }
 
-        //console.log(modifiedRoomInstruments);
+  //       //console.log(modifiedRoomInstruments);
   
-      res.json(modifiedRoomInstruments);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Failed to retrieve RoomInstrument entries' });
-    }
-  });
+  //     res.json(modifiedRoomInstruments);
+  //   } catch (error) {
+  //     console.error(error);
+  //     res.status(500).json({ error: 'Failed to retrieve RoomInstrument entries' });
+  //   }
+  // });
 
   // Get all Rooms associeted with a specific Instruments
   router.get('/api/1instrument-rooms', async (req, res) => {

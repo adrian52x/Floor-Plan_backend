@@ -14,9 +14,15 @@ import buildingRouter from './Routes/buildingRoutes.js';
 import floorRouter from './Routes/floorRoutes.js'
 import departmentRouter from './Routes/departmentRoutes.js'
 import roomRouter from './Routes/roomRoutes.js'
-import instrumentRouter from './Routes/instrumentRoutes.js'
-import roomInstrumentRouter from './Routes/roomInstrumentRoutes.js'
 import userRouter from './Routes/userRoutes.js'
+import pcRouter from "./Routes/pcRoutes.js";
+import networkPointRouter from "./Routes/networkPointRoutes.js";
+
+import instrumentRouter from './Routes/instrumentRoutes.js'
+import instrumentRouterV2 from "./Routes/instrumentRoutesV2.js";
+
+import roomInstrumentRouter from './Routes/roomInstrumentRoutes.js'
+import roomItemsRouter from "./Routes/roomItemsRoutes.js";
 
 
 import objectRouter from './Routes/objectRoutes.js';
@@ -55,9 +61,15 @@ app.use(buildingRouter);
 app.use(floorRouter);
 app.use(departmentRouter);
 app.use(roomRouter);
-app.use(instrumentRouter);
-app.use(roomInstrumentRouter);
 app.use(userRouter);
+app.use(pcRouter);
+app.use(networkPointRouter);
+
+app.use(instrumentRouter);
+app.use(instrumentRouterV2);
+
+app.use(roomInstrumentRouter);
+app.use(roomItemsRouter);
 
 app.use(objectRouter);
 app.use(emailService);
