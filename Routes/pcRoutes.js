@@ -57,6 +57,89 @@ router.post('/api/pcs', async (req, res) => {
   });
 
 
+  // Get a specific PC
+router.get('/api/pcs/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const pc = await PC.findById(id)
+      .select("-__v")
+      .populate('room_id');
+
+      if (!pc) {
+        return res.status(404).json({ error: 'PC not found' });
+      }
+
+    const pcById = {
+      _id: pc._id,
+      name: pc.name,
+      lansweeper: pc.lansweeper,
+      room_id: pc.room_id ? pc.room_id._id : null,
+      roomName: pc.room_id ? pc.room_id.name : null, // Check if room_id exists
+    };  
+
+    
+    res.json(pcById);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve Instrument' });
+  }
+});
+
+  // Update a PC
+router.patch('/api/pcs/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateFields = { ...req.body }; // Copy all properties from req.body
+
+
+    const originalPC = await PC.findById(id);
+
+    const isSame = ( 
+      updateFields.name === originalPC.name &&
+      updateFields.lansweeper === originalPC.lansweeper 
+    )
+    if (isSame) {
+      return res.sendStatus(204); // No changes were made to the instrument
+    }
+
+    const pc = await PC.findByIdAndUpdate(
+      id,
+      updateFields,
+      { new: true }
+    );
+
+    if (!pc) {
+      return res.status(404).json({ error: 'PC not found' });
+    }
+
+    res.json(pc);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to update PC' });
+  }
+});
+
+
+// Delete a PC
+router.delete('/api/pcs/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+  
+    const pc = await PC.findByIdAndDelete(id);
+
+    if (!pc) {
+      return res.status(404).json({ error: 'PC not found' });
+    }
+
+    res.json({ message: 'PC deleted' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to delete PC' });
+  }
+});
+
 
 
   export default router;

@@ -3,7 +3,10 @@ const router = Router();
 
 
 import Room from "../Model/Room.js";
-import RoomInstrument from "../Model/RoomInstrument.js";
+import Instrument from "../Model/Instrument.js";
+import PC from "../Model/PC.js";
+import NetworkPoint from "../Model/NetworkPoint.js";
+
 
 // Create a new Room
 router.post('/api/rooms', async (req, res) => {
@@ -105,18 +108,26 @@ router.patch('/api/rooms/:id', async (req, res) => {
   // Delete a Room
   router.delete('/api/rooms/:id', async (req, res) => {
     try {
-      const { id } = req.params;
-
-	  // Delete the RoomInstruments entries associated with the Room
-	  await RoomInstrument.deleteMany({ roomId: id });
-  
-      const room = await Room.findByIdAndDelete(id);
-  
-      if (!room) {
-        return res.status(404).json({ error: 'Room not found' });
-      }
-  
-      res.json({ message: 'Room deleted' });
+		const { id } = req.params;
+	
+		// Find the room that is being deleted
+		const room = await Room.findById(id);
+	
+		if (!room) {
+			return res.status(404).json({ error: 'Room not found' });
+		}
+	
+		// Unassign instruments associated with this room
+		await Instrument.updateMany({ room_id: room._id }, { $unset: { room_id: 1 } });
+		// Unassign PCs associated with this room
+		await PC.updateMany({ room_id: room._id }, { $unset: { room_id: 1 } });
+		// Unassign Network Points associated with this room
+		await NetworkPoint.updateMany({ room_id: room._id }, { $unset: { room_id: 1 } });
+	
+		// Delete the room
+		await Room.findByIdAndDelete(id);
+	
+		res.json({ message: 'Room deleted' });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Failed to delete Room' });

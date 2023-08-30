@@ -52,13 +52,28 @@ router.get('/api/instruments/:id', async (req, res) => {
     try {
       const { id } = req.params;
   
-      const instrument = await Instrument.findById(id);
+      const instrument = await Instrument.findById(id)
+        .select("-__v")
+        .populate('room_id');
+
+        if (!instrument) {
+          return res.status(404).json({ error: 'Instrument not found' });
+        }
+
+      const instrumentById = {
+        _id: instrument._id,
+        name: instrument.name,
+        bmram: instrument.bmram,
+        lansweeper: instrument.lansweeper,
+        actionRequired: instrument.actionRequired,
+        description: instrument.description,
+        room_id: instrument.room_id ? instrument.room_id._id : null,
+        roomName: instrument.room_id ? instrument.room_id.name : null, // Check if room_id exists
+      };  
   
-      if (!instrument) {
-        return res.status(404).json({ error: 'Instrument not found' });
-      }
+      
   
-      res.json(instrument);
+      res.json(instrumentById);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Failed to retrieve Instrument' });

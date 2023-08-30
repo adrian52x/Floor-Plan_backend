@@ -28,52 +28,36 @@ router.get('/api/assigned-items', async (req, res) => {
       .select("-__v")
       .populate('room_id', 'name floor_id');
 
-
-      // Process the instruments to include floor_id directly
-      const instrumentsWithFloorId = instruments.map(instrument => {
-        return {
+      const assignedItems = [
+        ...instruments.map(instrument => ({
             _id: instrument._id,
             type: "Instrument",
             name: instrument.name,
-            //bmram: instrument.bmram,
-            //lansweeper: instrument.lansweeper,
-            //actionRequired: instrument.actionRequired,
             room_id: instrument.room_id._id,
             roomName: instrument.room_id.name,
             floor_id: instrument.room_id.floor_id
-        };
-      });
-
-      // Process the pcs to include floor_id directly
-      const pcsWithFloorId = pcs.map(pc => {
-        return {
+        })),
+        ...pcs.map(pc => ({
             _id: pc._id,
             type: "PC",
             name: pc.name,
-           // lansweeper: pc.lansweeper,
             room_id: pc.room_id._id,
             roomName: pc.room_id.name,
             floor_id: pc.room_id.floor_id
-        };
-      });
-
-      // Process the ports to include floor_id directly
-      const portsWithFloorId = ports.map(port => {
-        return {
+        })),
+        ...ports.map(port => ({
             _id: port._id,
             type: "Network point",
-            name: port.portName,
+            name: port.name,
             room_id: port.room_id._id,
             roomName: port.room_id.name,
             floor_id: port.room_id.floor_id
-        };
-      });
+        }))
+    ];
 
-    res.json(instrumentsWithFloorId, pcsWithFloorId, portsWithFloorId); // ??????????
+    res.json(assignedItems);
 
 
-
-    //res.json(instruments);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to retrieve Instruments' });
@@ -81,7 +65,7 @@ router.get('/api/assigned-items', async (req, res) => {
 });
 
 // Get all Instruments/PCs/Ports associeted with a specific Room
-router.get('/api/1room-instruments', async (req, res) => {
+router.get('/api/1room-items', async (req, res) => {
   try {
     const { roomName } = req.query;
 
@@ -116,71 +100,178 @@ router.get('/api/1room-instruments', async (req, res) => {
   }
 });
 
-// Assign Instrument to Room
-router.patch('/api/instrumentToRoom', async (req, res) => {
-    try {
-      const { roomId, instrumentId } = req.body;
+// Assign Item to Room
+router.patch('/api/itemToRoom', async (req, res) => {
+	try {
+		const { roomId, itemId, itemType } = req.body;
 
-    // Check if room and instrument exist
-    const roomExists = await Room.exists({ _id: roomId });
-    const instrumentExists = await Instrument.exists({ _id: instrumentId });
+		// Check if the provided item type is valid
+		const validItemTypes = ['Instrument', 'PC', 'Network Point'];
+		if (!validItemTypes.includes(itemType)) {
+			return res.status(400).json({ error: 'Invalid item type' });
+		}
 
-    if (!roomExists || !instrumentExists) {
-      return res.status(404).json({ error: 'Room or instrument not found' });
-    }
+		// Check if the item exists based on its type
+		let itemModel;
+		switch (itemType) {
+		  case 'Instrument':
+			itemModel = Instrument;
+			break;
+		  case 'PC':
+			itemModel = PC;
+			break;
+		  case 'Network Point':
+			itemModel = NetworkPoint;
+			break;
+		  default:
+			return res.status(400).json({ error: 'Invalid item type' });
+		}
+	
+		// Check if item exists
+		const item = await itemModel.findById(itemId);
+		if (!item) {
+		  return res.status(404).json({ error: `${itemType} not found` });
+		}
 
-    // Check if an instrument with the same ID already exists in the room
-    const instrumentAlreadyExists = await Instrument.exists({ _id:instrumentId, room_id: roomId });
+		// Check if room exists
+		const room = await Room.exists({ _id: roomId });
+		if (!room) {
+			return res.status(404).json({ error: 'Room not found' });
+		}
 
-    if (instrumentAlreadyExists) {
-      return res.status(400).json({ error: 'This instrument already exists in this room' });
-    }
+		// Check if an instrument with the same ID already exists in the room
+		const itemAlreadyExists = await itemModel.exists({ _id:itemId, room_id: roomId });
 
-    const instrumentAlreadyInUse = await Instrument.findById(instrumentId);
+		if (itemAlreadyExists) {
+			return res.status(400).json({ error: `This ${itemType} already exists in this room` });
+		}
 
-    if (!instrumentAlreadyInUse) {
-        return res.status(404).json({ error: 'Instrument not found' });
-    }
-    console.log(instrumentAlreadyInUse.room_id);
 
-    if (instrumentAlreadyInUse.room_id === undefined) {
-        // check if instrument is not assigned to any room
-        instrumentAlreadyInUse.room_id = roomId;
-        await instrumentAlreadyInUse.save();
-        res.json(instrumentAlreadyInUse);
-    } else {
-        return res.status(400).json({ error: 'This instrument already exists in a different room' });
-    }
+		// check if item is not assigned to any room
+		if (item.room_id === undefined) {
+			item.room_id = roomId;
+			await item.save();
+			res.json(item);
+		} else {
+			return res.status(400).json({ error: `This ${itemType} already exists in a different room` });
+		}
+
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ error: 'Failed to assign Item to Room' });
+	}
+});
+
+ // UnAssign Item from Room
+ router.patch('/api/removeItemfromRoom', async (req, res) => {
+	try {
+		const { roomId, itemId, itemType } = req.body;
+
+		// Check if the provided item type is valid
+		const validItemTypes = ['Instrument', 'PC', 'Network Point'];
+		if (!validItemTypes.includes(itemType)) {
+			return res.status(400).json({ error: 'Invalid item type' });
+		}
+
+		// Check if the item exists based on its type
+		let itemModel;
+		switch (itemType) {
+		  case 'Instrument':
+			itemModel = Instrument;
+			break;
+		  case 'PC':
+			itemModel = PC;
+			break;
+		  case 'Network Point':
+			itemModel = NetworkPoint;
+			break;
+		  default:
+			return res.status(400).json({ error: 'Invalid item type' });
+		}
+
+		// Check if item exists
+		const item = await itemModel.findOne({ room_id: roomId, _id: itemId });
+		if (!item) {
+		  return res.status(404).json({ error: `${itemType} not found` });
+		}
   
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Failed to assign Instrument to Room' });
-    }
+	  
+		item.room_id = undefined;
+		await item.save();
+		res.json(item);
+  
+  
+	} catch (error) {
+	  console.error(error);
+	  res.status(500).json({ error: 'Failed to unassign Item from Room' });
+	}
   });
 
+// // Assign Instrument to Room
+// router.patch('/api/instrumentToRoom', async (req, res) => {
+//     try {
+//       const { roomId, instrumentId, itemType } = req.body;
 
-  // UnAssign Instrument from Room
-router.patch('/api/removeInstrumentfromRoom', async (req, res) => {
-  try {
-    const { roomId, instrumentId } = req.body;
+//     // Check if room and instrument exist
+//     const roomExists = await Room.exists({ _id: roomId });
+//     const instrumentExists = await Instrument.exists({ _id: instrumentId });
 
-    const roomInstrument = await Instrument.findOne({ room_id: roomId, _id: instrumentId });
+//     if (!roomExists || !instrumentExists) {
+//       return res.status(404).json({ error: 'Room or instrument not found' });
+//     }
+
+//     // Check if an instrument with the same ID already exists in the room
+//     const instrumentAlreadyExists = await Instrument.exists({ _id:instrumentId, room_id: roomId });
+
+//     if (instrumentAlreadyExists) {
+//       return res.status(400).json({ error: 'This instrument already exists in this room' });
+//     }
+
+//     const instrumentAlreadyInUse = await Instrument.findById(instrumentId);
+
+//     if (!instrumentAlreadyInUse) {
+//         return res.status(404).json({ error: 'Instrument not found' });
+//     }
+//     console.log(instrumentAlreadyInUse.room_id);
+
+//     if (instrumentAlreadyInUse.room_id === undefined) {
+//         // check if instrument is not assigned to any room
+//         instrumentAlreadyInUse.room_id = roomId;
+//         await instrumentAlreadyInUse.save();
+//         res.json(instrumentAlreadyInUse);
+//     } else {
+//         return res.status(400).json({ error: 'This instrument already exists in a different room' });
+//     }
   
-      //console.log(roomInstrument);
-      if (!roomInstrument) {
-        return res.status(404).json({ error: 'Room-Instrument entry not found' });
-      }
-
-      roomInstrument.room_id = undefined;
-      await roomInstrument.save();
-      res.json(roomInstrument);
+//     } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ error: 'Failed to assign Instrument to Room' });
+//     }
+//   });
 
 
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Failed to unassign Instrument from Room' });
-  }
-});
+//   // UnAssign Instrument from Room
+// router.patch('/api/removeInstrumentfromRoom', async (req, res) => {
+//   try {
+//     const { roomId, instrumentId } = req.body;
+
+//     const roomInstrument = await Instrument.findOne({ room_id: roomId, _id: instrumentId });
+  
+//       //console.log(roomInstrument);
+//       if (!roomInstrument) {
+//         return res.status(404).json({ error: 'Room-Instrument entry not found' });
+//       }
+
+//       roomInstrument.room_id = undefined;
+//       await roomInstrument.save();
+//       res.json(roomInstrument);
+
+
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Failed to unassign Instrument from Room' });
+//   }
+// });
 
 
 // Assign PC to Room
