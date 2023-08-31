@@ -4,6 +4,7 @@ const { Schema, model } = mongoose;
 const roomSchema = new Schema({
     name: { type: mongoose.Schema.Types.Mixed, required: true },
     type: { type: String },
+    roomNr: { type: String, required: false },
     floor_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Floor', required: true },
     position: [{
         left: { type: Number},

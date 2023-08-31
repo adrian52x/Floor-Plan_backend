@@ -7,7 +7,7 @@ import Instrument from "../Model/Instrument.js";
 // Create a new Instrument
 router.post('/api/instruments', async (req, res) => {
     try {
-      const { name, bmram, lansweeper, description, room_id } = req.body;
+      const { name, bmram, lansweeper, note, connectedTo, room_id } = req.body;
 
     // Check if the name is already in use
 	  const existingInstrument = await Instrument.findOne({ name });
@@ -18,9 +18,10 @@ router.post('/api/instruments', async (req, res) => {
   
       const instrument = new Instrument({
         name,
-        description,
+        note,
         bmram,
         lansweeper,
+        connectedTo,
         room_id
       });
   
@@ -66,7 +67,8 @@ router.get('/api/instruments/:id', async (req, res) => {
         bmram: instrument.bmram,
         lansweeper: instrument.lansweeper,
         actionRequired: instrument.actionRequired,
-        description: instrument.description,
+        note: instrument.note,
+        connectedTo: instrument.connectedTo,
         room_id: instrument.room_id ? instrument.room_id._id : null,
         roomName: instrument.room_id ? instrument.room_id.name : null, // Check if room_id exists
       };  
@@ -94,10 +96,14 @@ router.patch('/api/instruments/:id', async (req, res) => {
         updateFields.name === originalInstrument.name &&
         updateFields.lansweeper === originalInstrument.lansweeper &&
         updateFields.bmram === originalInstrument.bmram &&
-        updateFields.description === originalInstrument.description
+        updateFields.note === originalInstrument.note &&
+        updateFields.connectedTo === originalInstrument.connectedTo &&
+        updateFields.actionRequired === originalInstrument.actionRequired
+         
       )
+
+
       if (isSame) {
-        console.log("is the same");
         return res.sendStatus(204); // No changes were made to the instrument
       }
   

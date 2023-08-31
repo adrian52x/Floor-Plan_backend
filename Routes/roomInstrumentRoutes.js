@@ -47,7 +47,7 @@ router.post('/api/room-instruments', async (req, res) => {
     try {
       const roomInstruments = await RoomInstrument.find()
         .populate('roomId', 'name type')
-        .populate('instrumentId', 'name description');
+        .populate('instrumentId', 'name note');
 
 
     // // Map the results to create a new array with the modified objects
@@ -58,7 +58,7 @@ router.post('/api/room-instruments', async (req, res) => {
     //     roomType: item.roomId.type,
 
     //     instrumentName: item.instrumentId.name,
-    //     instrumentDesc: item.instrumentId.description
+    //     instrumentDesc: item.instrumentId.note
     // }));
 
 		const modifiedRoomInstruments = roomInstruments.map(async (item) => {
@@ -69,7 +69,7 @@ router.post('/api/room-instruments', async (req, res) => {
 			roomName: item.roomId.name,
 			roomType: item.roomId.type,
 			name: item.instrumentId.name,
-			instrumentDesc: item.instrumentId.description,
+			instrumentDesc: item.instrumentId.note,
 			floorId: room.floor_id, // Include the floorId from the room document
 			};
 		});
@@ -105,7 +105,7 @@ router.post('/api/room-instruments', async (req, res) => {
   
   //     const roomInstruments = await RoomInstrument.find({ roomId: room._id })
   //       .populate('roomId', 'name type')
-  //       .populate('instrumentId', 'name bmram lansweeper actionRequired description');        
+  //       .populate('instrumentId', 'name bmram lansweeper actionRequired note');        
 
 
   //     	// Extract instrument names into an array
@@ -115,7 +115,7 @@ router.post('/api/room-instruments', async (req, res) => {
   //       bmram: item.instrumentId.bmram,
   //       lansweeper: item.instrumentId.lansweeper,
   //       actionRequired: item.instrumentId.actionRequired,
-  //       description: item.instrumentId.description
+  //       note: item.instrumentId.note
 	//   	})); 
 
 
@@ -150,7 +150,7 @@ router.post('/api/room-instruments', async (req, res) => {
   
       const roomInstruments = await RoomInstrument.find({ instrumentId: instrument._id })
         .populate('roomId', 'name type')
-        .populate('instrumentId', 'name description');        
+        .populate('instrumentId', 'name note');        
   
 		const modifiedRoomInstruments = roomInstruments.map(async (item) => {
 			const room = await Room.findById(item.roomId._id);
@@ -160,7 +160,7 @@ router.post('/api/room-instruments', async (req, res) => {
 			roomName: item.roomId.name,
 			roomType: item.roomId.type,
 			instrumentName: item.instrumentId.name,
-			instrumentDesc: item.instrumentId.description,
+			instrumentDesc: item.instrumentId.note,
 			floorId: room.floor_id, // Include the floorId from the room document
 			};
 		});

@@ -88,6 +88,7 @@ router.get('/api/1room-items', async (req, res) => {
           roomId: room._id,
           roomName: room.name,
           roomType: room.type,
+          roomNr: room.roomNr ? room.roomNr : null,
           instruments: instruments,
           PCs: pcs,
           netWorkPorts: ports
@@ -177,14 +178,14 @@ router.patch('/api/itemToRoom', async (req, res) => {
 		let itemModel;
 		switch (itemType) {
 		  case 'Instrument':
-			itemModel = Instrument;
-			break;
+        itemModel = Instrument;
+        break;
 		  case 'PC':
-			itemModel = PC;
-			break;
+        itemModel = PC;
+        break;
 		  case 'Network Point':
-			itemModel = NetworkPoint;
-			break;
+        itemModel = NetworkPoint;
+        break;
 		  default:
 			return res.status(400).json({ error: 'Invalid item type' });
 		}
@@ -194,6 +195,10 @@ router.patch('/api/itemToRoom', async (req, res) => {
 		if (!item) {
 		  return res.status(404).json({ error: `${itemType} not found` });
 		}
+
+    if(itemType === "Instrument"){
+      item.connectedTo = 'N/A';
+    }
   
 	  
 		item.room_id = undefined;

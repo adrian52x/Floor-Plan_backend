@@ -11,7 +11,7 @@ import NetworkPoint from "../Model/NetworkPoint.js";
 // Create a new Room
 router.post('/api/rooms', async (req, res) => {
     try {
-      const { name, type, floor_id, position } = req.body;
+      const { name, type, roomNr, floor_id, position } = req.body;
 
 	  // Check if the name and floor_id combination is already in use
 	  const existingRoom = await Room.findOne({ name, floor_id });
@@ -23,6 +23,7 @@ router.post('/api/rooms', async (req, res) => {
       const room = new Room({
         name,
         type,
+        roomNr,
         floor_id,
         position
       });
@@ -79,7 +80,8 @@ router.patch('/api/rooms/:id', async (req, res) => {
 
     const isSame = ( 
         updateFields.name === originalRoom.name && 
-        updateFields.type === originalRoom.type && 
+        updateFields.type === originalRoom.type &&
+        updateFields.roomNr === originalRoom.roomNr &&  
         JSON.stringify(updateFields.position) === JSON.stringify(originalRoom.position)
     )
     if (isSame) {

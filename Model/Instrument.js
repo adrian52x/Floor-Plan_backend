@@ -6,7 +6,8 @@ const instrumentSchema = new Schema({
     bmram: { type: String, required: true }, 
     lansweeper: { type: String, required: true },
     actionRequired: { type: Boolean, required: false, default: false },
-    description: { type: String, required: false },
+    note: { type: String, required: false, default: "N/A" },
+    connectedTo: { type: String, required: false, default: "N/A" },
     room_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Room', required: false }
 });
 
