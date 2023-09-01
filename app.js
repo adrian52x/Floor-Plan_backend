@@ -19,9 +19,7 @@ import pcRouter from "./Routes/pcRoutes.js";
 import networkPointRouter from "./Routes/networkPointRoutes.js";
 
 import instrumentRouter from './Routes/instrumentRoutes.js'
-import instrumentRouterV2 from "./Routes/instrumentRoutesV2.js";
 
-import roomInstrumentRouter from './Routes/roomInstrumentRoutes.js'
 import roomItemsRouter from "./Routes/roomItemsRoutes.js";
 
 
@@ -63,13 +61,11 @@ app.use(departmentRouter);
 app.use(roomRouter);
 app.use(userRouter);
 app.use(pcRouter);
+
 app.use(networkPointRouter);
-
 app.use(instrumentRouter);
-app.use(instrumentRouterV2);
-
-app.use(roomInstrumentRouter);
 app.use(roomItemsRouter);
+
 
 app.use(objectRouter);
 app.use(emailService);

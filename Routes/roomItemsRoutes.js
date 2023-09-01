@@ -196,8 +196,20 @@ router.patch('/api/itemToRoom', async (req, res) => {
 		  return res.status(404).json({ error: `${itemType} not found` });
 		}
 
+    // When unassign an instrument from Room, it will remove any connected PC.
     if(itemType === "Instrument"){
       item.connectedTo = 'N/A';
+    }
+
+    // When unassing a PC from Room, it will update the Instrument that is connected to that PC
+    if(itemType === "PC"){
+      const removePCfromInstrument = await Instrument.findOne({ connectedTo: item.name })
+
+      if (removePCfromInstrument) {
+        removePCfromInstrument.connectedTo = 'N/A';
+        await removePCfromInstrument.save();
+      }
+      
     }
   
 	  
