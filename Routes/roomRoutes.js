@@ -1,7 +1,7 @@
 import Router from "express";
 const router = Router();
 
-
+import Floor from "../Model/Floor.js";
 import Room from "../Model/Room.js";
 import Instrument from "../Model/Instrument.js";
 import PC from "../Model/PC.js";
@@ -13,11 +13,15 @@ router.post('/api/rooms', async (req, res) => {
     try {
       const { name, type, roomNr, floor_id, position } = req.body;
 
-	  // Check if the name and floor_id combination is already in use
-	  const existingRoom = await Room.findOne({ name, floor_id });
+	  // Check if the name is already in use
+	  const existingRoom = await Room.findOne({ name })
+    
 
 	  if (existingRoom) {
-		return res.status(400).json({ error: `Room - '${name}' already exists on this floor` });
+      const roomOnThisFloor = await Floor.findById(existingRoom.floor_id)
+        .populate('building_id', 'name');
+
+		  return res.status(400).json({ error: `Room - '${name}' already exists in ${roomOnThisFloor.building_id.name}/${roomOnThisFloor.level}` });
 	  }
   
       const room = new Room({

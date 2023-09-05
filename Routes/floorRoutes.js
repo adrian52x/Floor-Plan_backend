@@ -54,13 +54,21 @@ router.post('/api/floors', async (req, res) => {
     try {
       const { id } = req.params;
   
-      const floor = await Floor.findById(id);
+      const floor = await Floor.findById(id)
+        .populate('building_id', 'name');
   
       if (!floor) {
         return res.status(404).json({ error: 'Floor not found' });
       }
+
+      // Map the results to create a new array with the modified objects
+      const modifiedFloor = {
+        _id: floor._id,
+        level: floor.level,
+        building: floor.building_id.name,
+      };
   
-      res.json(floor);
+      res.json(modifiedFloor);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Failed to retrieve Floor' });
