@@ -9,13 +9,15 @@ import NetworkPoint from "../Model/NetworkPoint.js";
 // Create a new Network Point
 router.post('/api/netports', async (req, res) => {
     try {
-      const { name, switchPort, room_id } = req.body;
+      let { name, switchPort, room_id } = req.body;
+
+      name = name.trim();
 
       // Check if the name is already in use
 	  const existingPort = await NetworkPoint.findOne({ name });
 
 	  if (existingPort) {
-		  return res.status(400).json({ error: 'This Network Port already exists' });
+		  return res.status(409).json({ error: 'This Network Port already exists' });
 	  }
   
       const networkPoint = new NetworkPoint({
@@ -92,7 +94,9 @@ router.get('/api/netports/:id', async (req, res) => {
 router.patch('/api/netports/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const updateFields = { ...req.body }; // Copy all properties from req.body
+    let updateFields = { ...req.body }; // Copy all properties from req.body
+
+    updateFields.name = updateFields.name.trim();
 
 
     const originalNetworkPoint = await NetworkPoint.findById(id);
@@ -101,6 +105,16 @@ router.patch('/api/netports/:id', async (req, res) => {
       updateFields.name === originalNetworkPoint.name &&
       updateFields.switchPort === originalNetworkPoint.switchPort 
     )
+
+    if (!(updateFields.name === originalNetworkPoint.name)) {
+      // Check if the new name is already in use (only if the name is changed)
+      const nameAlreadyUsed = await NetworkPoint.findOne({ name: updateFields.name })
+      if (nameAlreadyUsed) {
+        return res.status(409).json({ error: `Network point name - '${updateFields.name}' already in use` });
+      }
+    }
+
+
     if (isSame) {
       return res.sendStatus(204); // No changes were made to the instrument
     }

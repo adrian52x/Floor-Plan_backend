@@ -7,13 +7,15 @@ import Instrument from "../Model/Instrument.js";
 // Create a new Instrument
 router.post('/api/instruments', async (req, res) => {
     try {
-      const { name, bmram, lansweeper, note, connectedTo, room_id } = req.body;
+      let { name, bmram, lansweeper, note, connectedTo, room_id } = req.body;
+
+      name = name.trim();
 
     // Check if the name is already in use
 	  const existingInstrument = await Instrument.findOne({ name });
 
 	  if (existingInstrument) {
-		  return res.status(400).json({ error: 'This Instrument already exists' });
+		  return res.status(409).json({ error: 'This Instrument already exists' });
 	  }
   
       const instrument = new Instrument({
@@ -89,6 +91,8 @@ router.patch('/api/instruments/:id', async (req, res) => {
       const { id } = req.params;
       const updateFields = { ...req.body }; // Copy all properties from req.body
 
+      //updateFields.name = updateFields.name.trim();
+
 
 	    const originalInstrument = await Instrument.findById(id);
 
@@ -98,15 +102,22 @@ router.patch('/api/instruments/:id', async (req, res) => {
         updateFields.bmram === originalInstrument.bmram &&
         updateFields.note === originalInstrument.note &&
         updateFields.connectedTo === originalInstrument.connectedTo &&
-        updateFields.actionRequired === originalInstrument.actionRequired
-         
+        updateFields.actionRequired === originalInstrument.actionRequired  
       )
+
+      if (!(updateFields.name === originalInstrument.name)) {
+        // Check if the new name is already in use (only if the name is changed)
+        const nameAlreadyUsed = await Instrument.findOne({ name: updateFields.name });
+        if (nameAlreadyUsed) {
+          return res.status(409).json({ error: `Instrument name - '${updateFields.name}' already in use` });
+        }
+      }
 
 
       if (isSame) {
         return res.sendStatus(204); // No changes were made to the instrument
       }
-  
+
       const instrument = await Instrument.findByIdAndUpdate(
         id,
         updateFields,
@@ -120,7 +131,7 @@ router.patch('/api/instruments/:id', async (req, res) => {
       res.json(instrument);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Failed to update Instrument' });
+      res.status(500).json({ error: `Failed to update ${updateFields.name}` });
     }
 });
 

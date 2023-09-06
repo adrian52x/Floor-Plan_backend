@@ -11,7 +11,9 @@ import NetworkPoint from "../Model/NetworkPoint.js";
 // Create a new Room
 router.post('/api/rooms', async (req, res) => {
     try {
-      const { name, type, roomNr, floor_id, position } = req.body;
+      let { name, type, roomNr, floor_id, position } = req.body;
+
+      name = name.trim();
 
 	  // Check if the name is already in use
 	  const existingRoom = await Room.findOne({ name })
@@ -21,7 +23,7 @@ router.post('/api/rooms', async (req, res) => {
       const roomOnThisFloor = await Floor.findById(existingRoom.floor_id)
         .populate('building_id', 'name');
 
-		  return res.status(400).json({ error: `Room - '${name}' already exists in ${roomOnThisFloor.building_id.name}/${roomOnThisFloor.level}` });
+		  return res.status(409).json({ error: `Room - '${name}' already exists in ${roomOnThisFloor.building_id.name}/${roomOnThisFloor.level}` });
 	  }
   
       const room = new Room({
@@ -77,10 +79,12 @@ router.post('/api/rooms', async (req, res) => {
 router.patch('/api/rooms/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const updateFields = { ...req.body }; // Copy all properties from req.body
+    let updateFields = { ...req.body }; // Copy all properties from req.body
 
+    updateFields.name = updateFields.name.trim();
 
 	  const originalRoom = await Room.findById(id);
+
 
     const isSame = ( 
         updateFields.name === originalRoom.name && 
@@ -88,6 +92,16 @@ router.patch('/api/rooms/:id', async (req, res) => {
         updateFields.roomNr === originalRoom.roomNr &&  
         JSON.stringify(updateFields.position) === JSON.stringify(originalRoom.position)
     )
+
+    if (!(updateFields.name === originalRoom.name)) {
+      // Check if the new name is already in use (only if the name is changed)
+      const nameAlreadyUsed = await Room.findOne({ name: updateFields.name })
+      if (nameAlreadyUsed) {
+        return res.status(409).json({ error: `Room name - '${updateFields.name}' already in use` });
+      }
+    }
+
+
     if (isSame) {
       return res.sendStatus(204); // No changes were made to the room
     }

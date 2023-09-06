@@ -7,13 +7,15 @@ import PC from "../Model/PC.js";
 // Create a new PC
 router.post('/api/pcs', async (req, res) => {
     try {
-      const { name, lansweeper, room_id } = req.body;
+      let { name, lansweeper, room_id } = req.body;
+
+      name = name.trim();
 
       // Check if the name is already in use
 	  const existingPC = await PC.findOne({ name });
 
 	  if (existingPC) {
-		  return res.status(400).json({ error: 'This PC already exists' });
+		  return res.status(409).json({ error: 'This PC already exists' });
 	  }
   
       const pc = new PC({
@@ -90,7 +92,9 @@ router.get('/api/pcs/:id', async (req, res) => {
 router.patch('/api/pcs/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const updateFields = { ...req.body }; // Copy all properties from req.body
+    let updateFields = { ...req.body }; // Copy all properties from req.body
+
+    updateFields.name = updateFields.name.trim();
 
 
     const originalPC = await PC.findById(id);
@@ -99,6 +103,15 @@ router.patch('/api/pcs/:id', async (req, res) => {
       updateFields.name === originalPC.name &&
       updateFields.lansweeper === originalPC.lansweeper 
     )
+
+    if (!(updateFields.name === originalPC.name)) {
+      // Check if the new name is already in use (only if the name is changed)
+      const nameAlreadyUsed = await PC.findOne({ name: updateFields.name })
+      if (nameAlreadyUsed) {
+        return res.status(409).json({ error: `PC name - '${updateFields.name}' already in use` });
+      }
+    } 
+
     if (isSame) {
       return res.sendStatus(204); // No changes were made to the instrument
     }

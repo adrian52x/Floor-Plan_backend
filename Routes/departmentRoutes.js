@@ -7,13 +7,15 @@ import Department from "../Model/Department.js";
 // Create a new Department
 router.post('/api/departments', async (req, res) => {
     try {
-      const { name, description, color, floor_id, position } = req.body;
+      let { name, description, color, floor_id, position } = req.body;
+
+      name = name.trim();
 
       // Check if the name and floor_id combination is already in use
       const existingDepart = await Department.findOne({ name, floor_id });
 
       if (existingDepart) {
-        return res.status(400).json({ error: `Department - '${name}' already exists on this floor` });
+        return res.status(409).json({ error: `Department - '${name}' already exists on this floor` });
       }
   
       const department = new Department({
@@ -69,8 +71,6 @@ router.post('/api/departments', async (req, res) => {
         const { id } = req.params;
         const updateFields = { ...req.body }; // Copy all properties from req.body
 
-        console.log("updateFields", updateFields);
-
         const originalDepartment = await Department.findById(id);
 
         const isSame = ( 
@@ -78,6 +78,8 @@ router.post('/api/departments', async (req, res) => {
           updateFields.color === originalDepartment.color && 
            JSON.stringify(updateFields.position) === JSON.stringify(originalDepartment.position)
       )
+
+      
       if (isSame) {
         return res.sendStatus(204); // No changes were made to the room
       }
@@ -91,8 +93,7 @@ router.post('/api/departments', async (req, res) => {
         if (!department) {
             return res.status(404).json({ error: 'Department not found' });
         }
-        
-        console.log("after update", department);
+      
         res.json(department);
     } catch (error) {
       console.error(error);
