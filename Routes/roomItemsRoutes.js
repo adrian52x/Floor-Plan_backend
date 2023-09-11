@@ -13,20 +13,59 @@ router.get('/api/assigned-items', async (req, res) => {
       const instruments = await Instrument.find({
         room_id: { $exists: true }
       })
+      // .select("-__v")
+      // .populate('room_id', 'name floor_id');
       .select("-__v")
-      .populate('room_id', 'name floor_id');
+      .populate({
+        path: 'room_id',
+        select: 'name floor_id',
+        populate: {
+          path: 'floor_id',
+          select: 'level building_id',
+          populate: {
+            path: 'building_id',
+            select: 'name', 
+          }
+        }
+      });
 
       const pcs = await PC.find({
         room_id: { $exists: true }
       })
+      // .select("-__v")
+      // .populate('room_id', 'name floor_id');
       .select("-__v")
-      .populate('room_id', 'name floor_id');
+      .populate({
+        path: 'room_id',
+        select: 'name floor_id',
+        populate: {
+          path: 'floor_id',
+          select: 'level building_id',
+          populate: {
+            path: 'building_id',
+            select: 'name', 
+          }
+        }
+      });
 
       const ports = await NetworkPoint.find({
         room_id: { $exists: true }
       })
+      // .select("-__v")
+      // .populate('room_id', 'name floor_id');
       .select("-__v")
-      .populate('room_id', 'name floor_id');
+      .populate({
+        path: 'room_id',
+        select: 'name floor_id',
+        populate: {
+          path: 'floor_id',
+          select: 'level building_id',
+          populate: {
+            path: 'building_id',
+            select: 'name', 
+          }
+        }
+      });
 
       const assignedItems = [
         ...instruments.map(instrument => ({
@@ -35,7 +74,10 @@ router.get('/api/assigned-items', async (req, res) => {
             name: instrument.name,
             room_id: instrument.room_id._id,
             roomName: instrument.room_id.name,
-            floor_id: instrument.room_id.floor_id
+            // floor_id: instrument.room_id.floor_id,
+            floor_id: instrument.room_id.floor_id._id,
+            floorLevel: instrument.room_id.floor_id.level,
+            buildingName: instrument.room_id.floor_id.building_id.name
         })),
         ...pcs.map(pc => ({
             _id: pc._id,
@@ -43,7 +85,9 @@ router.get('/api/assigned-items', async (req, res) => {
             name: pc.name,
             room_id: pc.room_id._id,
             roomName: pc.room_id.name,
-            floor_id: pc.room_id.floor_id
+            floor_id: pc.room_id.floor_id._id,
+            floorLevel: pc.room_id.floor_id.level,
+            buildingName: pc.room_id.floor_id.building_id.name
         })),
         ...ports.map(port => ({
             _id: port._id,
@@ -51,7 +95,9 @@ router.get('/api/assigned-items', async (req, res) => {
             name: port.name,
             room_id: port.room_id._id,
             roomName: port.room_id.name,
-            floor_id: port.room_id.floor_id
+            floor_id: port.room_id.floor_id._id,
+            floorLevel: port.room_id.floor_id.level,
+            buildingName: port.room_id.floor_id.building_id.name
         }))
     ];
 
