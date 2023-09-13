@@ -23,9 +23,6 @@ import instrumentRouter from './Routes/instrumentRoutes.js'
 import roomItemsRouter from "./Routes/roomItemsRoutes.js";
 
 
-import objectRouter from './Routes/objectRoutes.js';
-import emailService from './Routes/emailService.js'
-
 
 let mongoURL;
 let frontendIP;
@@ -67,8 +64,8 @@ app.use(instrumentRouter);
 app.use(roomItemsRouter);
 
 
-app.use(objectRouter);
-app.use(emailService);
+//app.use(objectRouter);
+//app.use(emailService);
 
 
 app.use(helmet());

@@ -256,19 +256,9 @@ router.patch('/api/itemToRoom', async (req, res) => {
 
     // When unassign an instrument from Room, it will remove any connected PC.
     if(itemType === "Instrument"){
-      item.connectedTo = 'N/A';
+      item.connectedTo = null;
     }
 
-    // When unassing a PC from Room, it will update the Instrument that is connected to that PC
-    // if(itemType === "PC"){
-    //   const removePCfromInstrument = await Instrument.findOne({ connectedTo: item._id })
-
-    //   if (removePCfromInstrument) {
-    //     removePCfromInstrument.connectedTo = null;
-    //     await removePCfromInstrument.save();
-    //   }
-      
-    // }
     if (itemType === "PC") {
       await Instrument.updateMany({ connectedTo: item._id }, { $set: { connectedTo: null } });
     }
@@ -284,82 +274,6 @@ router.patch('/api/itemToRoom', async (req, res) => {
 	  res.status(500).json({ error: 'Failed to unassign Item from Room' });
 	}
   });
-
-// // Assign Instrument to Room
-// router.patch('/api/instrumentToRoom', async (req, res) => {
-//     try {
-//       const { roomId, instrumentId, itemType } = req.body;
-
-//     // Check if room and instrument exist
-//     const roomExists = await Room.exists({ _id: roomId });
-//     const instrumentExists = await Instrument.exists({ _id: instrumentId });
-
-//     if (!roomExists || !instrumentExists) {
-//       return res.status(404).json({ error: 'Room or instrument not found' });
-//     }
-
-//     // Check if an instrument with the same ID already exists in the room
-//     const instrumentAlreadyExists = await Instrument.exists({ _id:instrumentId, room_id: roomId });
-
-//     if (instrumentAlreadyExists) {
-//       return res.status(400).json({ error: 'This instrument already exists in this room' });
-//     }
-
-//     const instrumentAlreadyInUse = await Instrument.findById(instrumentId);
-
-//     if (!instrumentAlreadyInUse) {
-//         return res.status(404).json({ error: 'Instrument not found' });
-//     }
-//     console.log(instrumentAlreadyInUse.room_id);
-
-//     if (instrumentAlreadyInUse.room_id === undefined) {
-//         // check if instrument is not assigned to any room
-//         instrumentAlreadyInUse.room_id = roomId;
-//         await instrumentAlreadyInUse.save();
-//         res.json(instrumentAlreadyInUse);
-//     } else {
-//         return res.status(400).json({ error: 'This instrument already exists in a different room' });
-//     }
-  
-//     } catch (error) {
-//       console.error(error);
-//       res.status(500).json({ error: 'Failed to assign Instrument to Room' });
-//     }
-//   });
-
-
-//   // UnAssign Instrument from Room
-// router.patch('/api/removeInstrumentfromRoom', async (req, res) => {
-//   try {
-//     const { roomId, instrumentId } = req.body;
-
-//     const roomInstrument = await Instrument.findOne({ room_id: roomId, _id: instrumentId });
-  
-//       //console.log(roomInstrument);
-//       if (!roomInstrument) {
-//         return res.status(404).json({ error: 'Room-Instrument entry not found' });
-//       }
-
-//       roomInstrument.room_id = undefined;
-//       await roomInstrument.save();
-//       res.json(roomInstrument);
-
-
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'Failed to unassign Instrument from Room' });
-//   }
-// });
-
-
-// Assign PC to Room
-// UnAssign PC from Room
-
-// Assign Network Point to Room
-// UnAssign Network Point from Room
-
-
-
 
 
 export default router;
