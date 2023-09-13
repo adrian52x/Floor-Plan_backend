@@ -129,13 +129,25 @@ router.get('/api/1room-items', async (req, res) => {
 
     const instruments = await Instrument.find({ room_id: room._id })
       .select('-__v -room_id')
+      .populate('connectedTo', 'name'); 
+
+      // Modify the instruments array to only contain the name of the connected PC
+      const modifiedInstruments = instruments.map(instrument => ({
+          _id: instrument._id,
+          name: instrument.name,
+          bmram: instrument.bmram,
+          lansweeper: instrument.lansweeper,
+          actionRequired: instrument.actionRequired,
+          note: instrument.note,
+          connectedTo: instrument.connectedTo ? instrument.connectedTo.name : null
+      }));
               
       const roomItems = {
           roomId: room._id,
           roomName: room.name,
           roomType: room.type,
           roomNr: room.roomNr ? room.roomNr : null,
-          instruments: instruments,
+          instruments: modifiedInstruments,
           PCs: pcs,
           netWorkPorts: ports
       }
@@ -248,14 +260,17 @@ router.patch('/api/itemToRoom', async (req, res) => {
     }
 
     // When unassing a PC from Room, it will update the Instrument that is connected to that PC
-    if(itemType === "PC"){
-      const removePCfromInstrument = await Instrument.findOne({ connectedTo: item.name })
+    // if(itemType === "PC"){
+    //   const removePCfromInstrument = await Instrument.findOne({ connectedTo: item._id })
 
-      if (removePCfromInstrument) {
-        removePCfromInstrument.connectedTo = 'N/A';
-        await removePCfromInstrument.save();
-      }
+    //   if (removePCfromInstrument) {
+    //     removePCfromInstrument.connectedTo = null;
+    //     await removePCfromInstrument.save();
+    //   }
       
+    // }
+    if (itemType === "PC") {
+      await Instrument.updateMany({ connectedTo: item._id }, { $set: { connectedTo: null } });
     }
   
 	  

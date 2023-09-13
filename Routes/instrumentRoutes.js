@@ -3,6 +3,7 @@ const router = Router();
 
 
 import Instrument from "../Model/Instrument.js";
+import PC from "../Model/PC.js";
 
 // Create a new Instrument
 router.post('/api/instruments', async (req, res) => {
@@ -91,9 +92,18 @@ router.patch('/api/instruments/:id', async (req, res) => {
       const { id } = req.params;
       const updateFields = { ...req.body }; // Copy all properties from req.body
 
-      //updateFields.name = updateFields.name.trim();
 
+      if(updateFields.connectedTo !== null){
+         const connectedToThisPC = await PC.findOne({name: updateFields.connectedTo })
 
+         if(connectedToThisPC) {
+          updateFields.connectedTo = connectedToThisPC._id
+         } else {
+          return res.sendStatus(204);
+         }
+
+      }
+      
 	    const originalInstrument = await Instrument.findById(id);
 
       const isSame = ( 
@@ -101,7 +111,7 @@ router.patch('/api/instruments/:id', async (req, res) => {
         updateFields.lansweeper === originalInstrument.lansweeper &&
         updateFields.bmram === originalInstrument.bmram &&
         updateFields.note === originalInstrument.note &&
-        updateFields.connectedTo === originalInstrument.connectedTo &&
+        updateFields.connectedTo?.toString() === originalInstrument.connectedTo?.toString() &&
         updateFields.actionRequired === originalInstrument.actionRequired  
       )
 

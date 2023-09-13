@@ -3,6 +3,7 @@ const router = Router();
 
 
 import PC from "../Model/PC.js";
+import Instrument from "../Model/Instrument.js";
 
 // Create a new PC
 router.post('/api/pcs', async (req, res) => {
@@ -145,6 +146,9 @@ router.delete('/api/pcs/:id', async (req, res) => {
     if (!pc) {
       return res.status(404).json({ error: 'PC not found' });
     }
+
+    // Update connectedTo field in associated instruments
+    await Instrument.updateMany({ connectedTo: pc._id }, { connectedTo: null });
 
     res.json({ message: 'PC deleted' });
   } catch (error) {
