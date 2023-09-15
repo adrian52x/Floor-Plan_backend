@@ -92,8 +92,7 @@ router.patch('/api/instruments/:id', async (req, res) => {
       const { id } = req.params;
       const updateFields = { ...req.body }; // Copy all properties from req.body
 
-
-      if(updateFields.connectedTo !== null){
+      if((updateFields.connectedTo !== null && updateFields.connectedTo !== undefined)){
          const connectedToThisPC = await PC.findOne({name: updateFields.connectedTo })
 
          if(connectedToThisPC) {
