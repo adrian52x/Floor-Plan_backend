@@ -8,7 +8,7 @@ import PC from "../Model/PC.js";
 // Create a new Instrument
 router.post('/api/instruments', async (req, res) => {
     try {
-      let { name, bmram, lansweeper, note, connectedTo, room_id } = req.body;
+      let { name, bmram, note, connectedTo, room_id } = req.body;
 
       name = name.trim();
 
@@ -23,7 +23,6 @@ router.post('/api/instruments', async (req, res) => {
         name,
         note,
         bmram,
-        lansweeper,
         connectedTo,
         room_id
       });
@@ -68,7 +67,6 @@ router.get('/api/instruments/:id', async (req, res) => {
         _id: instrument._id,
         name: instrument.name,
         bmram: instrument.bmram,
-        lansweeper: instrument.lansweeper,
         actionRequired: instrument.actionRequired,
         note: instrument.note,
         connectedTo: instrument.connectedTo,
@@ -107,7 +105,6 @@ router.patch('/api/instruments/:id', async (req, res) => {
 
       const isSame = ( 
         updateFields.name === originalInstrument.name &&
-        updateFields.lansweeper === originalInstrument.lansweeper &&
         updateFields.bmram === originalInstrument.bmram &&
         updateFields.note === originalInstrument.note &&
         updateFields.connectedTo?.toString() === originalInstrument.connectedTo?.toString() &&

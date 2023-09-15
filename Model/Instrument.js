@@ -4,7 +4,6 @@ const { Schema, model } = mongoose;
 const instrumentSchema = new Schema({
     name: { type: String, required: true },
     bmram: { type: String, required: true }, 
-    lansweeper: { type: String, required: true },
     actionRequired: { type: Boolean, required: false, default: false },
     note: { type: String, required: false, default: "N/A" },
     connectedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'PC', default: null, required: false },

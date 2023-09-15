@@ -136,7 +136,6 @@ router.get('/api/1room-items', async (req, res) => {
           _id: instrument._id,
           name: instrument.name,
           bmram: instrument.bmram,
-          lansweeper: instrument.lansweeper,
           actionRequired: instrument.actionRequired,
           note: instrument.note,
           connectedTo: instrument.connectedTo ? instrument.connectedTo.name : null
