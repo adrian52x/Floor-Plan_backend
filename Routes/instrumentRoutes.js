@@ -50,6 +50,41 @@ router.get('/api/instruments', async (req, res) => {
     }
 });
 
+// Get all Instruments-report
+router.post('/api/instruments/filter', async (req, res) => {
+  try {
+    const { actionRequired, connectedTo, room } = req.body;
+
+    const filter = {};
+
+    if (actionRequired === 'yes') {
+      filter.actionRequired = true;
+    } else if (actionRequired === 'no') {
+      filter.actionRequired = false;
+    }
+
+    if (connectedTo === 'yes') {
+      filter.connectedTo = { $ne: null };
+    } else if (connectedTo === 'no') {
+      filter.connectedTo = null;
+    }
+
+    if (room === 'yes') {
+      filter.room_id = { $ne: undefined };
+    } else if (room === 'no') {
+      filter.room_id = undefined;
+    }
+
+    console.log(filter);
+
+    const instruments = await Instrument.find(filter).select('-__v');
+    res.json(instruments);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve filtered Instruments' });
+  }
+});
+
 // Get a specific Instrument
 router.get('/api/instruments/:id', async (req, res) => {
     try {
