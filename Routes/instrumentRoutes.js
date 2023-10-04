@@ -77,8 +77,24 @@ router.post('/api/instruments/filter', async (req, res) => {
 
     console.log(filter);
 
-    const instruments = await Instrument.find(filter).select('-__v');
-    res.json(instruments);
+    const instruments = await Instrument.find(filter)
+      .select('-__v')
+      .populate('room_id')
+      .populate('connectedTo');
+
+
+      const filteredInstruments = instruments.map(instrument => ({
+        _id: instrument._id,
+        name: instrument.name,
+        bmram: instrument.bmram,
+        actionRequired: instrument.actionRequired,
+        note: instrument.note,
+        connectedTo: instrument.connectedTo?.name,
+        room_id: instrument.room_id?.name
+      }))
+
+
+    res.json(filteredInstruments);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to retrieve filtered Instruments' });

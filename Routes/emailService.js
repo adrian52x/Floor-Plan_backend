@@ -8,12 +8,11 @@ router.post('/api/sendmail', async (req, res) => {
         
         const timeAndDate = new Date();
         const output = `
-            <p>Our customer service received your inquiry and we will be back to you as soon as possible</p>
+            <p>Thank you for your feedback</p>
             <h3>Contact details</h3>
             <ul>
                 <li>Name: ${req.body.fullName} </li>
                 <li>Subject: ${req.body.subject} </li>
-                <li>Type: ${req.body.type} | ${req.body.number}</li>
                 <li>Date & time: ${timeAndDate} </li>
             </ul>
             <h3>Message</h3>
@@ -38,12 +37,13 @@ router.post('/api/sendmail', async (req, res) => {
         let info = await transporter.sendMail({
             from: '"AGC Digital Floor Plan', // sender address
             to: req.body.email, // list of receivers
-            subject: "AGC DFP - New inquiry", // Subject line
+            subject: "AGC FloorPlan - New feedback", // Subject line
             text: "", // plain text body
             html: output, // html body
         });
 
-        console.log("Message sent: %s", info.messageId); 
+        //console.log("Message sent: %s", info.messageId); 
+        res.status(200).json({ message: `Message sent: %s ${info.messageId}`});
 
     } catch (error) {
         res.status(400).json({ message: "something wrong" });
