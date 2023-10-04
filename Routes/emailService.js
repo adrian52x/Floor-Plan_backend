@@ -21,7 +21,7 @@ router.post('/api/sendmail', async (req, res) => {
 
         // create reusable transporter object using the default SMTP transport
         let transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
+            host: 'smtp-mail.outlook.com',
             port: 587,
             secure: false, // true for 465, false for other ports
             auth: {
@@ -29,7 +29,8 @@ router.post('/api/sendmail', async (req, res) => {
                 pass: process.env.EMAIL_PASS, // generated ethereal password
             },
             tls:{
-                rejectUnauthorized: false
+                //rejectUnauthorized: false,
+                ciphers:'SSLv3'
             }
         });
 
