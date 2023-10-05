@@ -21,7 +21,7 @@ import networkPointRouter from "./Routes/networkPointRoutes.js";
 import instrumentRouter from './Routes/instrumentRoutes.js'
 
 import roomItemsRouter from "./Routes/roomItemsRoutes.js";
-import emailService from "./Routes/emailService.js"
+//import emailService from "./Routes/emailService.js"
 
 let mongoURL;
 let frontendIP;
@@ -64,7 +64,7 @@ app.use(roomItemsRouter);
 
 
 //app.use(objectRouter);
-app.use(emailService);
+//app.use(emailService);
 
 
 app.use(helmet());
