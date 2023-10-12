@@ -34,6 +34,8 @@ const verifyToken = (req, res, next) => {
 const adminOnly = (req, res, next) => {
    
     const cookie = req.cookies["AGC"];
+
+    console.log(cookie);
   
     if (!cookie) {
       return res.status(403).send("Unauthenticated");

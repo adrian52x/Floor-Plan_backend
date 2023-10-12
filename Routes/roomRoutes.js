@@ -7,9 +7,11 @@ import Instrument from "../Model/Instrument.js";
 import PC from "../Model/PC.js";
 import NetworkPoint from "../Model/NetworkPoint.js";
 
+import { adminOnly } from "../middleware.js";
+
 
 // Create a new Room
-router.post('/api/rooms', async (req, res) => {
+router.post('/api/rooms', adminOnly, async (req, res) => {
     try {
       let { name, type, roomNr, floor_id, position } = req.body;
 
@@ -76,7 +78,7 @@ router.post('/api/rooms', async (req, res) => {
   });
   
   // Update a Room
-router.patch('/api/rooms/:id', async (req, res) => {
+router.patch('/api/rooms/:id', adminOnly, async (req, res) => {
   try {
     const { id } = req.params;
     let updateFields = { ...req.body }; // Copy all properties from req.body
@@ -126,7 +128,7 @@ router.patch('/api/rooms/:id', async (req, res) => {
 
   
   // Delete a Room
-  router.delete('/api/rooms/:id', async (req, res) => {
+  router.delete('/api/rooms/:id', adminOnly, async (req, res) => {
     try {
 		const { id } = req.params;
 	

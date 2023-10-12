@@ -8,7 +8,7 @@ import Room from "../Model/Room.js";
 import RoomInstrument from "../Model/RoomInstrument.js";
 
 
-//import { verifyPlateNumber, adminOnly } from "../middleware.js";
+import { adminOnly } from "../middleware.js";
 
 
 // Get a specific building with its floors
@@ -112,7 +112,7 @@ router.get("/api/building/:key", async (req, res) => {
 
 
 // Create a Building
-router.post("/api/building", async (req, res) => {
+router.post("/api/building", adminOnly, async (req, res) => {
   try {
     const { name, location } = req.body;
 

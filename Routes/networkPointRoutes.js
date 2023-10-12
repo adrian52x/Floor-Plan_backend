@@ -4,10 +4,11 @@ const router = Router();
 
 
 import NetworkPoint from "../Model/NetworkPoint.js";
+import { adminOnly } from "../middleware.js";
 
 
 // Create a new Network Point
-router.post('/api/netports', async (req, res) => {
+router.post('/api/netports', adminOnly, async (req, res) => {
     try {
       let { name, switchPort, room_id } = req.body;
 
@@ -91,7 +92,7 @@ router.get('/api/netports/:id', async (req, res) => {
 
 
 // Update a Network Point
-router.patch('/api/netports/:id', async (req, res) => {
+router.patch('/api/netports/:id', adminOnly, async (req, res) => {
   try {
     const { id } = req.params;
     let updateFields = { ...req.body }; // Copy all properties from req.body
@@ -137,7 +138,7 @@ router.patch('/api/netports/:id', async (req, res) => {
 });
 
 // Delete a Network Point
-router.delete('/api/netports/:id', async (req, res) => {
+router.delete('/api/netports/:id', adminOnly, async (req, res) => {
   try {
     const { id } = req.params;
 

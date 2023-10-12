@@ -6,6 +6,8 @@ import Instrument from "../Model/Instrument.js";
 import PC from "../Model/PC.js";
 import NetworkPoint from "../Model/NetworkPoint.js";
 
+import { adminOnly } from "../middleware.js";
+
 
 //Get all assigned Items (Instruments/PCs/Ports)
 router.get('/api/assigned-items', async (req, res) => {
@@ -159,7 +161,7 @@ router.get('/api/1room-items', async (req, res) => {
 });
 
 // Assign Item to Room
-router.patch('/api/itemToRoom', async (req, res) => {
+router.patch('/api/itemToRoom', adminOnly, async (req, res) => {
 	try {
 		const { roomId, itemId, itemType } = req.body;
 
@@ -221,7 +223,7 @@ router.patch('/api/itemToRoom', async (req, res) => {
 });
 
  // UnAssign Item from Room
- router.patch('/api/removeItemfromRoom', async (req, res) => {
+ router.patch('/api/removeItemfromRoom', adminOnly, async (req, res) => {
 	try {
 		const { roomId, itemId, itemType } = req.body;
 
