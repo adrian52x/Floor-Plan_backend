@@ -8,6 +8,7 @@ import PC from "../Model/PC.js";
 import NetworkPoint from "../Model/NetworkPoint.js";
 
 import { adminOnly } from "../middleware.js";
+import { sortItems } from "../utils.js";
 
 
 // Create a new Room
@@ -48,10 +49,12 @@ router.post('/api/rooms', adminOnly, async (req, res) => {
   // Get all Rooms
   router.get('/api/rooms', async (req, res) => {
     try {
-      const rooms = await Room.find()
+      let rooms = await Room.find()
         .select('-__v')
         .exec();
-  
+      rooms = sortItems(rooms)
+
+      
       res.json(rooms);
     } catch (error) {
       console.error(error);

@@ -6,6 +6,7 @@ import Instrument from "../Model/Instrument.js";
 import PC from "../Model/PC.js";
 
 import { adminOnly } from "../middleware.js";
+import { sortItems } from "../utils.js";
 
 // Create a new Instrument
 router.post('/api/instruments', adminOnly, async (req, res) => {
@@ -42,9 +43,11 @@ router.post('/api/instruments', adminOnly, async (req, res) => {
 // Get all Instruments
 router.get('/api/instruments', async (req, res) => {
     try {
-      const instruments = await Instrument.find()
+      let instruments = await Instrument.find()
         .select("-__v");
-  
+
+      instruments = sortItems(instruments);  
+
       res.json(instruments);
     } catch (error) {
       console.error(error);
@@ -79,22 +82,22 @@ router.post('/api/instruments/filter', async (req, res) => {
 
     console.log(filter);
 
-    const instruments = await Instrument.find(filter)
+    let instruments = await Instrument.find(filter)
       .select('-__v')
       .populate('room_id')
       .populate('connectedTo');
 
-
-      const filteredInstruments = instruments.map(instrument => ({
-        _id: instrument._id,
-        name: instrument.name,
-        bmram: instrument.bmram,
-        actionRequired: instrument.actionRequired,
-        note: instrument.note,
-        connectedTo: instrument.connectedTo?.name,
-        room_id: instrument.room_id?.name
-      }))
-
+    instruments = sortItems(instruments);  
+     
+    const filteredInstruments = instruments.map(instrument => ({
+      _id: instrument._id,
+      name: instrument.name,
+      bmram: instrument.bmram,
+      actionRequired: instrument.actionRequired,
+      note: instrument.note,
+      connectedTo: instrument.connectedTo?.name,
+      room_id: instrument.room_id?.name
+    }))
 
     res.json(filteredInstruments);
   } catch (error) {

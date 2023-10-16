@@ -8,6 +8,7 @@ import Department from "../Model/Department.js";
 import Room from "../Model/Room.js";
 
 import { adminOnly } from "../middleware.js";
+import { sortItems } from "../utils.js";
 
 // Create a new Floor
 router.post('/api/floors', adminOnly, async (req, res) => {
@@ -142,13 +143,16 @@ router.get('/api/floor', async (req, res) => {
     }
 
 
-    const departments = await Department.find({ floor_id: floor.id })
+    let departments = await Department.find({ floor_id: floor.id })
         .select('-floor_id -__v')
         .exec();
+    departments = sortItems(departments);
 
-    const rooms = await Room.find({ floor_id: floor.id })
+
+    let rooms = await Room.find({ floor_id: floor.id })
         .select('-floor_id -__v')
-        .exec();    
+        .exec();   
+    rooms = sortItems(rooms);     
 
     const formattedFloor = {
         _id: floor._id,

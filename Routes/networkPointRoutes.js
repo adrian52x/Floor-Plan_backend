@@ -5,6 +5,7 @@ const router = Router();
 
 import NetworkPoint from "../Model/NetworkPoint.js";
 import { adminOnly } from "../middleware.js";
+import { sortItems } from "../utils.js";
 
 
 // Create a new Network Point
@@ -40,8 +41,10 @@ router.post('/api/netports', adminOnly, async (req, res) => {
   // Get all Network Points
   router.get('/api/netports', async (req, res) => {
     try {
-      const networkPoints = await NetworkPoint.find()
+      let networkPoints = await NetworkPoint.find()
       .select("-__v");
+
+      networkPoints = sortItems(networkPoints);
 
 
     // Map the results to create a new array with the modified objects

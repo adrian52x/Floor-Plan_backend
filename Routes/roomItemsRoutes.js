@@ -7,12 +7,13 @@ import PC from "../Model/PC.js";
 import NetworkPoint from "../Model/NetworkPoint.js";
 
 import { adminOnly } from "../middleware.js";
+import { sortItems } from "../utils.js";
 
 
 //Get all assigned Items (Instruments/PCs/Ports)
 router.get('/api/assigned-items', async (req, res) => {
   try {
-      const instruments = await Instrument.find({
+      let instruments = await Instrument.find({
         room_id: { $exists: true }
       })
       // .select("-__v")
@@ -30,8 +31,9 @@ router.get('/api/assigned-items', async (req, res) => {
           }
         }
       });
+      instruments = sortItems(instruments);
 
-      const pcs = await PC.find({
+      let pcs = await PC.find({
         room_id: { $exists: true }
       })
       // .select("-__v")
@@ -49,8 +51,9 @@ router.get('/api/assigned-items', async (req, res) => {
           }
         }
       });
+      pcs = sortItems(pcs);
 
-      const ports = await NetworkPoint.find({
+      let ports = await NetworkPoint.find({
         room_id: { $exists: true }
       })
       // .select("-__v")
@@ -68,6 +71,7 @@ router.get('/api/assigned-items', async (req, res) => {
           }
         }
       });
+      ports = sortItems(ports);
 
       const assignedItems = [
         ...instruments.map(instrument => ({
@@ -123,15 +127,18 @@ router.get('/api/1room-items', async (req, res) => {
       return res.status(404).json({ error: 'Room not found' });
     }
 
-    const pcs = await PC.find({ room_id: room._id})
-      .select('-room_id -__v')
+    let pcs = await PC.find({ room_id: room._id})
+      .select('-room_id -__v');
+    pcs = sortItems(pcs);
 
-    const ports = await NetworkPoint.find({ room_id: room._id })
-      .select('-room_id -__v')  
+    let ports = await NetworkPoint.find({ room_id: room._id })
+      .select('-room_id -__v');
+    ports = sortItems(ports);
 
-    const instruments = await Instrument.find({ room_id: room._id })
+    let instruments = await Instrument.find({ room_id: room._id })
       .select('-__v -room_id')
       .populate('connectedTo', 'name'); 
+    instruments = sortItems(instruments);
 
       // Modify the instruments array to only contain the name of the connected PC
       const modifiedInstruments = instruments.map(instrument => ({

@@ -6,6 +6,7 @@ import PC from "../Model/PC.js";
 import Instrument from "../Model/Instrument.js";
 
 import { adminOnly } from "../middleware.js";
+import { sortItems } from "../utils.js";
 
 // Create a new PC
 router.post('/api/pcs', adminOnly, async (req, res) => {
@@ -40,9 +41,10 @@ router.post('/api/pcs', adminOnly, async (req, res) => {
   // Get all PCs
   router.get('/api/pcs', async (req, res) => {
     try {
-      const pcs = await PC.find()
+      let pcs = await PC.find()
       .select("-__v");
 
+      pcs = sortItems(pcs);
 
     // Map the results to create a new array with the modified objects
     // const modifiedPCs = pcs.map(item => ({

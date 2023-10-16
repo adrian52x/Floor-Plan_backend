@@ -5,6 +5,7 @@ const router = Router();
 import Department from "../Model/Department.js";
 
 import { adminOnly } from "../middleware.js";
+import { sortItems } from "../utils.js";
 
 // Create a new Department
 router.post('/api/departments', adminOnly, async (req, res) => {
@@ -40,7 +41,9 @@ router.post('/api/departments', adminOnly, async (req, res) => {
   // Get all Departments
   router.get('/api/departments', async (req, res) => {
     try {
-      const departments = await Department.find();
+      let departments = await Department.find();
+
+      departments = sortItems(departments); 
   
       res.json(departments);
     } catch (error) {
