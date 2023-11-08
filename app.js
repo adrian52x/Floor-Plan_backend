@@ -30,6 +30,7 @@ let backendIP;
 
 if (process.env.NODE_ENV.trim() === 'production') {
   mongoURL = process.env.MONGO_PROD_URL;
+  frontendDNS = process.env.PROD_FRONTEND_DNS;
   frontendIP = process.env.PROD_FRONTEND_IP;
   backendIP = process.env.PROD_BACKEND_IP;
 } else {
@@ -44,7 +45,7 @@ if (process.env.NODE_ENV.trim() === 'production') {
 app.use(
   cors({
     credentials: true,
-    origin: frontendIP
+    origin: [frontendIP, frontendDNS]
   })
 );
 
