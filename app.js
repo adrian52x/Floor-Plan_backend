@@ -45,7 +45,7 @@ if (process.env.NODE_ENV.trim() === 'production') {
 app.use(
   cors({
     credentials: true,
-    origin: frontendDNS
+    origin: frontendIP
   })
 );
 
