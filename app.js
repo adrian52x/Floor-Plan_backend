@@ -26,11 +26,13 @@ import roomItemsRouter from "./Routes/roomItemsRoutes.js";
 let mongoURL;
 let frontendIP;
 let backendIP;
+let frontendDNS;
 
 
 if (process.env.NODE_ENV.trim() === 'production') {
   mongoURL = process.env.MONGO_PROD_URL;
   frontendIP = process.env.PROD_FRONTEND_IP;
+  frontendDNS = process.env.PROD_FRONTEND_DNS;
   backendIP = process.env.PROD_BACKEND_IP;
 } else {
   mongoURL = process.env.MONGO_DEV_URL;
@@ -44,7 +46,7 @@ if (process.env.NODE_ENV.trim() === 'production') {
 app.use(
   cors({
     credentials: true,
-    origin: '*'
+    origin: [frontendDNS, frontendIP]
   })
 );
 
