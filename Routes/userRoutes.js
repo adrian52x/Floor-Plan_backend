@@ -86,7 +86,7 @@ router.post("/api/login", async (req, res) => {
             const token = jwt.sign({ userId: user._id, userName, isAdmin: user.isAdmin }, process.env.SECRET_KEY, { expiresIn: "5h"});
 
             // create cookie
-            res.cookie('AGC', token, {
+            res.cookie('jwt_auth', token, {
                 maxAge: 5 * 60 * 60 * 1000, // 5 hours
                 sameSite: "none",
             })
