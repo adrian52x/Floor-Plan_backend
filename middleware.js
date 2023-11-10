@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 
 const verifyToken = (req, res, next) => {
-    const cookie = req.cookies["AGC"];
+    const cookie = req.cookies["jwt_auth"];
 
     if (!cookie) {
       return res.status(403).json({ message: "Unauthenticated"});
@@ -33,7 +33,7 @@ const verifyToken = (req, res, next) => {
 
 const adminOnly = (req, res, next) => {
    
-    const cookie = req.cookies["AGC"];
+    const cookie = req.cookies["jwt_auth"];
 
     console.log(cookie);
   

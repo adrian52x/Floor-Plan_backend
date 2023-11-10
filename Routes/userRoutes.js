@@ -104,7 +104,7 @@ router.post("/api/login", async (req, res) => {
 // Logout
 router.post("/api/logout", async (req, res) => {
     try {
-        res.cookie('AGC', '', {maxAge: 0}) 
+        res.cookie('jwt_auth', '', {maxAge: 0}) 
         return res.status(200).json({ message: "Logged out"});
     } catch (error) {
         return res.status(500).json({ message: error});
@@ -114,7 +114,7 @@ router.post("/api/logout", async (req, res) => {
 // Current user by token
 router.get("/api/user", async (req, res) => {
     try {
-        const cookie = req.cookies['AGC']
+        const cookie = req.cookies['jwt_auth']
         
 
         const credentials = jwt.verify(cookie, process.env.SECRET_KEY)
