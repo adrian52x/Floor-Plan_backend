@@ -87,7 +87,8 @@ router.post("/api/login", async (req, res) => {
 
             // create cookie
             res.cookie('AGC', token, {
-                maxAge: 5 * 60 * 60 * 1000 // 5 hours
+                maxAge: 5 * 60 * 60 * 1000, // 5 hours
+                sameSite: "none",
             })
     
             
