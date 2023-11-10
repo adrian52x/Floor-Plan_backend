@@ -33,7 +33,9 @@ if (process.env.NODE_ENV.trim() === 'production') {
   mongoURL = process.env.MONGO_PROD_URL;
   frontendIP = process.env.PROD_FRONTEND_IP;
   frontendDNS = process.env.PROD_FRONTEND_DNS;
+
   backendIP = process.env.PROD_BACKEND_IP;
+  backendDNS = process.env.PROD_BACKEND_DNS;
 } else {
   mongoURL = process.env.MONGO_DEV_URL;
   frontendIP = process.env.DEV_FRONTEND_IP;
