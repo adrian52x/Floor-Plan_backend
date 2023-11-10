@@ -87,7 +87,7 @@ router.post("/api/login", async (req, res) => {
 
             // create cookie
             res.cookie('jwt_auth', token, {
-                domain: '.biologics-floorplan.agc.jp',
+                //domain: '.biologics-floorplan.agc.jp',
                 maxAge: 5 * 60 * 60 * 1000, // 5 hours
                 sameSite: "strict",
             })
