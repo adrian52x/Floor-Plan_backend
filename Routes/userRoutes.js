@@ -88,7 +88,7 @@ router.post("/api/login", async (req, res) => {
             // create cookie
             res.cookie('jwt_auth', token, {
                 maxAge: 5 * 60 * 60 * 1000, // 5 hours
-                sameSite: "none",
+                sameSite: "strict",
             })
     
             
