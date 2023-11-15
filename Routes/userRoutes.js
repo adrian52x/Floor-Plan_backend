@@ -5,7 +5,7 @@ import User from "../Model/User.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
-import { verifyToken, adminOnly } from "../middleware.js";
+import { adminOnly } from "../middleware.js";
 
 
 // Get all users
@@ -84,16 +84,15 @@ router.post("/api/login", async (req, res) => {
         if (user && bcrypt.compare(password, user.password)) {
             // Create token
             const token = jwt.sign({ userId: user._id, userName, isAdmin: user.isAdmin }, process.env.SECRET_KEY, { expiresIn: "5h"});
+            return res.status(200).json(token);
 
             // create cookie
-            res.cookie('jwt_auth', token, {
-                //domain: '.biologics-floorplan.agc.jp',
-                maxAge: 5 * 60 * 60 * 1000, // 5 hours
-                sameSite: "strict",
-            })
+            // res.cookie('jwt_auth', token, {
+            //     maxAge: 5 * 60 * 60 * 1000, // 5 hours
+            //     sameSite: "strict",
+            // })
     
-            
-            return res.status(200).json(user);
+            //return res.status(200).json(user);
         }
         return res.status(400).send("Invalid Credentials");
     } catch (error) {
@@ -113,26 +112,26 @@ router.post("/api/logout", async (req, res) => {
 });
 
 // Current user by token
-router.get("/api/user", async (req, res) => {
-    try {
-        const cookie = req.cookies['jwt_auth']
+// router.get("/api/user", async (req, res) => {
+//     try {
+//         const cookie = req.cookies['jwt_auth']
         
 
-        const credentials = jwt.verify(cookie, process.env.SECRET_KEY)
+//         const credentials = jwt.verify(cookie, process.env.SECRET_KEY)
 
-        const user = await User.findOne({ _id: credentials.userId })
+//         const user = await User.findOne({ _id: credentials.userId })
 
-        // pass data without password
-        const {password, ...data} = user.toJSON()
+//         // pass data without password
+//         const {password, ...data} = user.toJSON()
 
         
 
-        return res.status(200).json(data);
+//         return res.status(200).json(data);
 
-    } catch (error) {
-        return res.status(401).json({ message: 'Unauthenticated', error })
-    }
-});
+//     } catch (error) {
+//         return res.status(401).json({ message: 'Unauthenticated', error })
+//     }
+// });
 
 
 export default router;
