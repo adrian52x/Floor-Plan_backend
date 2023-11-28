@@ -83,7 +83,7 @@ router.post("/api/login", async (req, res) => {
     
         if (user && bcrypt.compare(password, user.password)) {
             // Create token
-            const token = jwt.sign({ userId: user._id, userName, isAdmin: user.isAdmin }, process.env.SECRET_KEY, { expiresIn: "5h"});
+            const token = jwt.sign({ userId: user._id, userName, isAdmin: user.isAdmin, createdAt: new Date() }, process.env.SECRET_KEY, { expiresIn: "5h"});
             return res.status(200).json(token);
 
             // create cookie
