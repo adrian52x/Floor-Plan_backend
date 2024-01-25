@@ -5,11 +5,11 @@ const router = Router();
 import PC from "../Model/PC.js";
 import Instrument from "../Model/Instrument.js";
 
-import { adminOnly } from "../middleware.js";
+import { adminOnly, editor } from "../middleware.js";
 import { sortItems } from "../utils.js";
 
 // Create a new PC
-router.post('/api/pcs', adminOnly, async (req, res) => {
+router.post('/api/pcs', editor, async (req, res) => {
     try {
       let { name, lansweeper, room_id } = req.body;
 
@@ -94,7 +94,7 @@ router.get('/api/pcs/:id', async (req, res) => {
 });
 
   // Update a PC
-router.patch('/api/pcs/:id', adminOnly, async (req, res) => {
+router.patch('/api/pcs/:id', editor, async (req, res) => {
   try {
     const { id } = req.params;
     let updateFields = { ...req.body }; // Copy all properties from req.body
@@ -140,7 +140,7 @@ router.patch('/api/pcs/:id', adminOnly, async (req, res) => {
 
 
 // Delete a PC
-router.delete('/api/pcs/:id', adminOnly, async (req, res) => {
+router.delete('/api/pcs/:id', editor, async (req, res) => {
   try {
     const { id } = req.params;
 
