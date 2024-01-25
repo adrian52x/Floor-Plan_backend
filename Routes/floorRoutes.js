@@ -7,7 +7,7 @@ import Building from "../Model/Building.js";
 import Department from "../Model/Department.js";
 import Room from "../Model/Room.js";
 
-import { adminOnly } from "../middleware.js";
+import { adminOnly, viewer } from "../middleware.js";
 import { sortItems } from "../utils.js";
 
 // Create a new Floor

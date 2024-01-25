@@ -7,7 +7,7 @@ import Instrument from "../Model/Instrument.js";
 import PC from "../Model/PC.js";
 import NetworkPoint from "../Model/NetworkPoint.js";
 
-import { adminOnly } from "../middleware.js";
+import { adminOnly, editor, viewer } from "../middleware.js";
 import { sortItems } from "../utils.js";
 
 

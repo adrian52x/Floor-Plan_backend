@@ -30,36 +30,57 @@ import jwt from "jsonwebtoken";
 
 // };
 
-
-// const adminOnly = (req, res, next) => {
+const viewer = (req, res, next) => {
    
-//     const cookie = req.cookies["jwt_auth"];
+  const token = req.headers.authorization;
 
-//     console.log(cookie);
-  
-//     if (!cookie) {
-//       return res.status(403).send("Unauthenticated");
-//     }
-//     try {
-        
-//         const decoded = jwt.verify(cookie, process.env.SECRET_KEY);
-//         req.user = decoded;
+  if (!token) {
+    return res.status(403).send("Unauthenticated");
+  }
+  try {
+      
+      const decoded = jwt.verify(token, process.env.SECRET_KEY);
+      req.user = decoded;
 
-//         console.log(req.user);
 
-//         // Checking if admin
-//         if( !(req.user.isAdmin === true ) ){
-//             return res.status(401).send("Access Denied");
-//         }  
-//         next();
+      if( !(req.user.userRights.includes('admin') || req.user.userRights.includes('editor') || req.user.userRights.includes('viewer')  ) ){
+        return res.status(401).send("Access Denied");
+    }  
+      next();
 
-  
-//     } catch (err) {
-//         console.log(err);
-//       return res.status(401).json(err);
-//     }
 
-// }
+  } catch (err) {
+      console.log(err);
+    return res.status(401).json(err);
+  }
+
+}
+
+
+const editor = (req, res, next) => {
+   
+  const token = req.headers.authorization;
+
+  if (!token) {
+    return res.status(403).send("Unauthenticated");
+  }
+  try {
+      
+      const decoded = jwt.verify(token, process.env.SECRET_KEY);
+      req.user = decoded;
+
+      if( !(req.user.userRights.includes('admin') || req.user.userRights.includes('editor')  ) ){
+        return res.status(401).send("Access Denied");
+    }  
+      next();
+
+
+  } catch (err) {
+      console.log(err);
+    return res.status(401).json(err);
+  }
+
+}
 
 
 const adminOnly = (req, res, next) => {
@@ -76,9 +97,12 @@ const adminOnly = (req, res, next) => {
 
 
       // Checking if admin
-      if( !(req.user.isAdmin === true ) ){
-          return res.status(401).send("Access Denied");
-      }  
+      // if( !(req.user.isAdmin === true ) ){
+      //     return res.status(401).send("Access Denied");
+      // } 
+      if( !(req.user.userRights.includes('admin') ) ){
+        return res.status(401).send("Access Denied");
+    }  
       next();
 
 
@@ -91,4 +115,4 @@ const adminOnly = (req, res, next) => {
 
 
 
-  export { adminOnly };
+  export { adminOnly, editor, viewer };
