@@ -4,7 +4,7 @@ const { Schema, model } = mongoose;
 const userSchema = new Schema({
     userName: { type: String, unique: true },
     password: { type: String },
-    //isAdmin: { type: Boolean, default: false},
+    isAdmin: { type: Boolean, default: false},
     userRights: { 
         type: [String], 
         enum: ['admin', 'editor', 'viewer'], // specify the different types of rights here

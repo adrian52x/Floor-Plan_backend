@@ -7,11 +7,11 @@ import Building from "../Model/Building.js";
 import Department from "../Model/Department.js";
 import Room from "../Model/Room.js";
 
-import { adminOnly, viewer } from "../middleware.js";
+import { adminOnly, viewer, editor } from "../middleware.js";
 import { sortItems } from "../utils.js";
 
 // Create a new Floor
-router.post('/api/floors', adminOnly, async (req, res) => {
+router.post('/api/floors', editor, async (req, res) => {
     try {
       const { level, building_id } = req.body;
   
@@ -79,7 +79,7 @@ router.post('/api/floors', adminOnly, async (req, res) => {
   });
   
   // Update a Floor
-  router.put('/api/floors/:id', adminOnly, async (req, res) => {
+  router.put('/api/floors/:id', editor, async (req, res) => {
     try {
       const { id } = req.params;
       const { level, building_id } = req.body;
@@ -102,7 +102,7 @@ router.post('/api/floors', adminOnly, async (req, res) => {
   });
   
   // Delete a Floor
-  router.delete('/api/floors/:id', adminOnly, async (req, res) => {
+  router.delete('/api/floors/:id', editor, async (req, res) => {
     try {
       const { id } = req.params;
   

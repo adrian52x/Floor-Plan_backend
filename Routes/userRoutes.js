@@ -20,7 +20,7 @@ router.get("/api/users", adminOnly, async (req, res) => {
 
 
 // Register
-router.post("/api/register", async (req, res) => {
+router.post("/api/register", adminOnly, async (req, res) => {
     // Our register logic starts here
    try {
         // Get user input

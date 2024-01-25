@@ -4,11 +4,11 @@ const router = Router();
 
 import Department from "../Model/Department.js";
 
-import { adminOnly } from "../middleware.js";
+import { adminOnly, editor } from "../middleware.js";
 import { sortItems } from "../utils.js";
 
 // Create a new Department
-router.post('/api/departments', adminOnly, async (req, res) => {
+router.post('/api/departments', editor, async (req, res) => {
     try {
       let { name, description, color, floor_id, position } = req.body;
 
@@ -71,7 +71,7 @@ router.post('/api/departments', adminOnly, async (req, res) => {
   });
   
   // Update a Department
-  router.patch('/api/departments/:id', adminOnly, async (req, res) => {
+  router.patch('/api/departments/:id', editor, async (req, res) => {
     try {
         const { id } = req.params;
         const updateFields = { ...req.body }; // Copy all properties from req.body
@@ -107,7 +107,7 @@ router.post('/api/departments', adminOnly, async (req, res) => {
   });
   
   // Delete a Department
-  router.delete('/api/departments/:id', adminOnly, async (req, res) => {
+  router.delete('/api/departments/:id', editor, async (req, res) => {
     try {
       const { id } = req.params;
   

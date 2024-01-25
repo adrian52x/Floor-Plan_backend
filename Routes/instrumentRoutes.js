@@ -7,11 +7,11 @@ import Instrument from "../Model/Instrument.js";
 import PC from "../Model/PC.js";
 import ActivityLog from "../Model/ActivityLog.js";
 
-import { adminOnly } from "../middleware.js";
+import { adminOnly, editor } from "../middleware.js";
 import { sortItems } from "../utils.js";
 
 // Create a new Instrument
-router.post('/api/instruments', adminOnly, async (req, res) => {
+router.post('/api/instruments', editor, async (req, res) => {
     try {
       let { name, bmram, note, connectedTo, room_id } = req.body;
 
@@ -161,7 +161,7 @@ router.get('/api/instruments/:id', async (req, res) => {
 
 
 // Update an Instrument
-router.patch('/api/instruments/:id', adminOnly, async (req, res) => {
+router.patch('/api/instruments/:id', editor, async (req, res) => {
     try {
       const { id } = req.params;
       const updateFields = { ...req.body }; // Copy all properties from req.body
@@ -219,7 +219,7 @@ router.patch('/api/instruments/:id', adminOnly, async (req, res) => {
 
 
 // Delete an Instrument
-router.delete('/api/instruments/:id', adminOnly, async (req, res) => {
+router.delete('/api/instruments/:id', editor, async (req, res) => {
     try {
       const { id } = req.params;
 

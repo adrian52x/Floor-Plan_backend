@@ -12,7 +12,7 @@ import { sortItems } from "../utils.js";
 
 
 // Create a new Room
-router.post('/api/rooms', adminOnly, async (req, res) => {
+router.post('/api/rooms', editor, async (req, res) => {
     try {
       let { name, type, roomNr, floor_id, position } = req.body;
 
@@ -81,7 +81,7 @@ router.post('/api/rooms', adminOnly, async (req, res) => {
   });
   
   // Update a Room
-router.patch('/api/rooms/:id', adminOnly, async (req, res) => {
+router.patch('/api/rooms/:id', editor, async (req, res) => {
   try {
     const { id } = req.params;
     let updateFields = { ...req.body }; // Copy all properties from req.body
@@ -131,7 +131,7 @@ router.patch('/api/rooms/:id', adminOnly, async (req, res) => {
 
   
   // Delete a Room
-  router.delete('/api/rooms/:id', adminOnly, async (req, res) => {
+  router.delete('/api/rooms/:id', editor, async (req, res) => {
     try {
 		const { id } = req.params;
 	
