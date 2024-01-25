@@ -24,7 +24,7 @@ router.post("/api/register", async (req, res) => {
     // Our register logic starts here
    try {
         // Get user input
-        const { userName, password, isAdmin } = req.body;
+        const { userName, password } = req.body;
 
         // Validate user input
         if (!(userName && password )) {
@@ -50,8 +50,7 @@ router.post("/api/register", async (req, res) => {
         // Create user in our database
         const user = await User.create({
             userName: userName.toLowerCase(), // sanitize,
-            password: encryptedUserPassword,
-            isAdmin: isAdmin
+            password: encryptedUserPassword
         });
 
         // return new user
@@ -83,7 +82,7 @@ router.post("/api/login", async (req, res) => {
     
         if (user && bcrypt.compare(password, user.password)) {
             // Create token
-            const token = jwt.sign({ userId: user._id, userName, isAdmin: user.isAdmin, createdAt: new Date() }, process.env.SECRET_KEY, { expiresIn: "5h"});
+            const token = jwt.sign({ userId: user._id, userName, userRights: user.userRights, isAdmin: user.isAdmin, createdAt: new Date() }, process.env.SECRET_KEY, { expiresIn: "5h"});
             return res.status(200).json(token);
 
             // create cookie

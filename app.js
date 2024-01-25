@@ -21,7 +21,7 @@ import networkPointRouter from "./Routes/networkPointRoutes.js";
 import instrumentRouter from './Routes/instrumentRoutes.js'
 
 import roomItemsRouter from "./Routes/roomItemsRoutes.js";
-//import emailService from "./Routes/emailService.js"
+import logsRouter from "./Routes/logsRoutes.js";
 
 let mongoURL;
 let frontendIP;
@@ -64,6 +64,7 @@ app.use(pcRouter);
 app.use(networkPointRouter);
 app.use(instrumentRouter);
 app.use(roomItemsRouter);
+app.use(logsRouter);
 
 
 //app.use(objectRouter);

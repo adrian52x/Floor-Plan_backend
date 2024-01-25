@@ -1,9 +1,11 @@
 import Router from "express";
 const router = Router();
+import jwt from "jsonwebtoken";
 
 
 import Instrument from "../Model/Instrument.js";
 import PC from "../Model/PC.js";
+import ActivityLog from "../Model/ActivityLog.js";
 
 import { adminOnly } from "../middleware.js";
 import { sortItems } from "../utils.js";
@@ -31,6 +33,24 @@ router.post('/api/instruments', adminOnly, async (req, res) => {
       });
   
       const savedInstrument = await instrument.save();
+
+      // Extract the token from the Authorization header
+      const token = req.headers.authorization;
+
+      // Decode the token to get the user's ID
+      const decoded = jwt.verify(token, process.env.SECRET_KEY);
+
+      // Create a new activity log
+      const log = new ActivityLog({
+        user: decoded.userId,
+        userAction: 'Created instrument: ' + savedInstrument.name,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString()
+      });
+
+      // Save the activity log
+      await log.save();
+
   
       res.json(savedInstrument);
     } catch (error) {
