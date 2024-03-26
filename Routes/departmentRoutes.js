@@ -1,6 +1,9 @@
 import Router from "express";
 const router = Router();
 
+import jwt from "jsonwebtoken";
+
+import ActivityLog from "../Model/ActivityLog.js";
 
 import Department from "../Model/Department.js";
 
@@ -30,6 +33,23 @@ router.post('/api/departments', editor, async (req, res) => {
       });
   
       const savedDepartment = await department.save();
+
+      // Extract the token from the Authorization header
+      const token = req.headers.authorization;
+
+      // Decode the token to get the user's ID
+      const decoded = jwt.verify(token, process.env.SECRET_KEY);
+
+      // Create a new activity log
+      const log = new ActivityLog({
+        user: decoded.userId,
+        userAction: 'Created department: ' + savedDepartment.name,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString()
+      });
+
+      // Save the activity log
+      await log.save();
   
       res.json(savedDepartment);
     } catch (error) {
@@ -98,6 +118,23 @@ router.post('/api/departments', editor, async (req, res) => {
         if (!department) {
             return res.status(404).json({ error: 'Department not found' });
         }
+
+        // Extract the token from the Authorization header
+      const token = req.headers.authorization;
+
+      // Decode the token to get the user's ID
+      const decoded = jwt.verify(token, process.env.SECRET_KEY);
+
+      // Create a new activity log
+      const log = new ActivityLog({
+        user: decoded.userId,
+        userAction: 'Updated department: ' + originalDepartment.name,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString()
+      });
+
+      // Save the activity log
+      await log.save();
       
         res.json(department);
     } catch (error) {
@@ -116,6 +153,23 @@ router.post('/api/departments', editor, async (req, res) => {
       if (!department) {
         return res.status(404).json({ error: 'Department not found' });
       }
+
+      // Extract the token from the Authorization header
+      const token = req.headers.authorization;
+
+      // Decode the token to get the user's ID
+      const decoded = jwt.verify(token, process.env.SECRET_KEY);
+
+      // Create a new activity log
+      const log = new ActivityLog({
+        user: decoded.userId,
+        userAction: 'Deleted department: ' + department.name,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString()
+      });
+
+      // Save the activity log
+      await log.save();
   
       res.json({ message: 'Department deleted' });
     } catch (error) {

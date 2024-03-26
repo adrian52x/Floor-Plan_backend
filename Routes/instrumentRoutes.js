@@ -209,6 +209,24 @@ router.patch('/api/instruments/:id', editor, async (req, res) => {
       if (!instrument) {
         return res.status(404).json({ error: 'Instrument not found' });
       }
+
+
+      // Extract the token from the Authorization header
+      const token = req.headers.authorization;
+
+      // Decode the token to get the user's ID
+      const decoded = jwt.verify(token, process.env.SECRET_KEY);
+
+      // Create a new activity log
+      const log = new ActivityLog({
+        user: decoded.userId,
+        userAction: 'Updated instrument: ' + originalInstrument.name,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString()
+      });
+
+      // Save the activity log
+      await log.save();
   
       res.json(instrument);
     } catch (error) {
@@ -229,6 +247,24 @@ router.delete('/api/instruments/:id', editor, async (req, res) => {
       if (!instrument) {
         return res.status(404).json({ error: 'Instrument not found' });
       }
+
+
+      // Extract the token from the Authorization header
+      const token = req.headers.authorization;
+
+      // Decode the token to get the user's ID
+      const decoded = jwt.verify(token, process.env.SECRET_KEY);
+
+      // Create a new activity log
+      const log = new ActivityLog({
+        user: decoded.userId,
+        userAction: 'Deleted instrument: ' + instrument.name,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString()
+      });
+
+      // Save the activity log
+      await log.save();
   
       res.json({ message: 'Instrument deleted' });
     } catch (error) {
