@@ -8,7 +8,7 @@ const userSchema = new Schema({
     userRights: { 
         type: [String], 
         enum: ['admin', 'editor', 'viewer'], // specify the different types of rights here
-        default: ['viewer'] // set the default right
+        default: ['editor'] // set the default right
     }
 });
 

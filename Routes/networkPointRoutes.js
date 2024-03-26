@@ -2,10 +2,12 @@
 import Router from "express";
 const router = Router();
 
+import jwt from "jsonwebtoken";
 
 import NetworkPoint from "../Model/NetworkPoint.js";
 import { adminOnly, editor } from "../middleware.js";
 import { sortItems } from "../utils.js";
+import ActivityLog from "../Model/ActivityLog.js";
 
 
 // Create a new Network Point
@@ -29,6 +31,24 @@ router.post('/api/netports', editor, async (req, res) => {
       });
   
       const savedNetworkpoint = await networkPoint.save();
+
+
+      // Extract the token from the Authorization header
+      const token = req.headers.authorization;
+
+      // Decode the token to get the user's ID
+      const decoded = jwt.verify(token, process.env.SECRET_KEY);
+
+      // Create a new activity log
+      const log = new ActivityLog({
+        user: decoded.userId,
+        userAction: 'Created network-point: ' + savedNetworkpoint.name,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString()
+      });
+
+      // Save the activity log
+      await log.save();
   
       res.json(savedNetworkpoint);
     } catch (error) {
@@ -133,6 +153,24 @@ router.patch('/api/netports/:id', editor, async (req, res) => {
       return res.status(404).json({ error: 'Network Point not found' });
     }
 
+
+    // Extract the token from the Authorization header
+    const token = req.headers.authorization;
+
+    // Decode the token to get the user's ID
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+
+    // Create a new activity log
+    const log = new ActivityLog({
+      user: decoded.userId,
+      userAction: 'Updated network-point: ' + originalNetworkPoint.name,
+      date: new Date().toLocaleDateString(),
+      time: new Date().toLocaleTimeString()
+    });
+
+    // Save the activity log
+    await log.save();
+
     res.json(networkPoint);
   } catch (error) {
     console.error(error);
@@ -151,6 +189,24 @@ router.delete('/api/netports/:id', editor, async (req, res) => {
     if (!networkPoint) {
       return res.status(404).json({ error: 'Network Point not found' });
     }
+
+
+    // Extract the token from the Authorization header
+    const token = req.headers.authorization;
+
+    // Decode the token to get the user's ID
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+
+    // Create a new activity log
+    const log = new ActivityLog({
+      user: decoded.userId,
+      userAction: 'Deleted network-point: ' + networkPoint.name,
+      date: new Date().toLocaleDateString(),
+      time: new Date().toLocaleTimeString()
+    });
+
+    // Save the activity log
+    await log.save();
 
     res.json({ message: 'Network Point deleted' });
   } catch (error) {

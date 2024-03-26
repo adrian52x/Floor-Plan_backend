@@ -28,12 +28,12 @@ router.post("/api/register", adminOnly, async (req, res) => {
 
         // Validate user input
         if (!(userName && password )) {
-            return res.status(400).send("All input are required");
+            return res.status(400).send({ error: "All input are required"});
         }
 
         // Validate userName
         if ( userName.length < 4) {
-            return res.status(400).send("Username must have at least 4 characters");
+            return res.status(400).send({ error: "Username must have at least 4 characters"});
         }
 
         // checks if user already exist
@@ -41,7 +41,7 @@ router.post("/api/register", adminOnly, async (req, res) => {
         const oldUser = await User.findOne({ userName });
 
         if (oldUser) {
-            return res.status(409).send("Username already in use");
+            return res.status(409).send({ error : "Username already in use"});
         } 
  
         //Encrypt user password
@@ -80,7 +80,7 @@ router.post("/api/login", async (req, res) => {
         const user = await User.findOne({ userName });
         
     
-        if (user && bcrypt.compare(password, user.password)) {
+        if (user && await bcrypt.compare(password, user.password)) {
             // Create token
             const token = jwt.sign({ userId: user._id, userName, userRights: user.userRights, isAdmin: user.isAdmin, createdAt: new Date() }, process.env.SECRET_KEY, { expiresIn: "5h"});
             return res.status(200).json(token);

@@ -1,6 +1,10 @@
 import Router from "express";
 const router = Router();
 
+import jwt from "jsonwebtoken";
+
+import ActivityLog from "../Model/ActivityLog.js";
+
 import Floor from "../Model/Floor.js";
 import Room from "../Model/Room.js";
 import Instrument from "../Model/Instrument.js";
@@ -38,6 +42,24 @@ router.post('/api/rooms', editor, async (req, res) => {
       });
   
       const savedRoom = await room.save();
+
+
+      // Extract the token from the Authorization header
+      const token = req.headers.authorization;
+
+      // Decode the token to get the user's ID
+      const decoded = jwt.verify(token, process.env.SECRET_KEY);
+
+      // Create a new activity log
+      const log = new ActivityLog({
+        user: decoded.userId,
+        userAction: 'Created Room: ' + savedRoom.name,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString()
+      });
+
+      // Save the activity log
+      await log.save();
   
       res.json(savedRoom);
     } catch (error) {
@@ -121,6 +143,23 @@ router.patch('/api/rooms/:id', editor, async (req, res) => {
       return res.status(404).json({ error: 'Room not found' });
     }
 
+    // Extract the token from the Authorization header
+    const token = req.headers.authorization;
+
+    // Decode the token to get the user's ID
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+
+    // Create a new activity log
+    const log = new ActivityLog({
+      user: decoded.userId,
+      userAction: 'Updated Room: ' + originalRoom.name,
+      date: new Date().toLocaleDateString(),
+      time: new Date().toLocaleTimeString()
+    });
+
+    // Save the activity log
+    await log.save();
+
 
     res.json(room);
   } catch (error) {
@@ -151,6 +190,24 @@ router.patch('/api/rooms/:id', editor, async (req, res) => {
 	
 		// Delete the room
 		await Room.findByIdAndDelete(id);
+
+
+    // Extract the token from the Authorization header
+    const token = req.headers.authorization;
+
+    // Decode the token to get the user's ID
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+
+    // Create a new activity log
+    const log = new ActivityLog({
+      user: decoded.userId,
+      userAction: 'Deleted Room: ' + room.name,
+      date: new Date().toLocaleDateString(),
+      time: new Date().toLocaleTimeString()
+    });
+
+    // Save the activity log
+    await log.save();
 	
 		res.json({ message: 'Room deleted' });
     } catch (error) {
