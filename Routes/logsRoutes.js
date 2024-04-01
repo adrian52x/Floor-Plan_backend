@@ -1,6 +1,7 @@
 import ActivityLog from "../Model/ActivityLog.js";
 
 import Router from "express";
+import { adminOnly } from "../middleware.js";
 const router = Router();
 
 // Get all Logs
@@ -16,7 +17,7 @@ router.get('/api/logs', async (req, res) => {
 });
 
 // Delete old logs
-router.delete('/api/logs', async (req, res) => {
+router.delete('/api/logs', adminOnly, async (req, res) => {
   try {
       // Count the total number of logs
       let totalLogs = await ActivityLog.countDocuments();
