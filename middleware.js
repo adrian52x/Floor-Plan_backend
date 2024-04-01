@@ -34,8 +34,8 @@ const viewer = (req, res, next) => {
    
   const token = req.headers.authorization;
 
-  if (!token) {
-    return res.status(403).send("Unauthenticated");
+  if (token === null || token === undefined || token === '' || token === 'null') {
+    return res.status(403).send({ error: "Unauthenticated"});
   }
   try {
       
@@ -61,8 +61,8 @@ const editor = (req, res, next) => {
    
   const token = req.headers.authorization;
 
-  if (!token) {
-    return res.status(403).send("Unauthenticated");
+  if (token === null || token === undefined || token === '' || token === 'null') {
+    return res.status(403).send({ error: "Unauthenticated"});
   }
   try {
       
@@ -87,11 +87,11 @@ const adminOnly = (req, res, next) => {
    
   const token = req.headers.authorization;
 
-  if (!token) {
-    return res.status(403).send("Unauthenticated");
+  if (token === null || token === undefined || token === '' || token === 'null') {
+    return res.status(403).send({ error: "Unauthenticated"});
   }
+
   try {
-      
       const decoded = jwt.verify(token, process.env.SECRET_KEY);
       req.user = decoded;
 
@@ -108,7 +108,7 @@ const adminOnly = (req, res, next) => {
 
   } catch (err) {
       console.log(err);
-    return res.status(401).json(err);
+      return res.status(401).send({ error: "Access Denied"});
   }
 
 }

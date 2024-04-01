@@ -4,7 +4,7 @@ const router = Router();
 import User from "../Model/User.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-
+import ActivityLog from "../Model/ActivityLog.js";
 import { adminOnly } from "../middleware.js";
 
 
@@ -14,7 +14,7 @@ router.get("/api/users", adminOnly, async (req, res) => {
         const users = await User.find()
         res.status(200).json(users) 
     } catch (error) {
-        res.status(400).json({ message: "something wrong, please try again." })
+        res.status(400).json({ error: "something wrong, please try again." })
     }
 });
 
@@ -24,7 +24,7 @@ router.post("/api/register", adminOnly, async (req, res) => {
     // Our register logic starts here
    try {
         // Get user input
-        const { userName, password } = req.body;
+        const { userName, password, isAdmin, userRights } = req.body;
 
         // Validate user input
         if (!(userName && password )) {
@@ -50,8 +50,27 @@ router.post("/api/register", adminOnly, async (req, res) => {
         // Create user in our database
         const user = await User.create({
             userName: userName.toLowerCase(), // sanitize,
-            password: encryptedUserPassword
+            password: encryptedUserPassword,
+            isAdmin: isAdmin,
+            userRights: userRights
         });
+
+            // Extract the token from the Authorization header
+        const token = req.headers.authorization;
+
+        // Decode the token to get the user's ID
+        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+
+        // Create a new activity log
+        const log = new ActivityLog({
+            user: decoded.userId,
+            userAction: 'Created User: ' + user.userName,
+            date: new Date().toLocaleDateString(),
+            time: new Date().toLocaleTimeString()
+        });
+
+        // Save the activity log
+        await log.save();
 
         // return new user
         return res.status(201).json(user);
@@ -93,7 +112,7 @@ router.post("/api/login", async (req, res) => {
     
             //return res.status(200).json(user);
         }
-        return res.status(400).send("Invalid Credentials");
+        return res.status(400).json({ error: "Invalid Credentials"});
     } catch (error) {
         return res.status(400).json({ message: "something wrong"})
     }    
@@ -131,6 +150,45 @@ router.post("/api/logout", async (req, res) => {
 //         return res.status(401).json({ message: 'Unauthenticated', error })
 //     }
 // });
+
+// Delete user
+router.delete('/api/user/:id', adminOnly, async (req, res) => {
+    try {
+        // Get user ID from params
+        const { id } = req.params;
+
+        // Delete user
+        const user = await User.findByIdAndDelete(id);
+
+        // If no user was found, return 404
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+            // Extract the token from the Authorization header
+        const token = req.headers.authorization;
+
+        // Decode the token to get the user's ID
+        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+
+        // Create a new activity log
+        const log = new ActivityLog({
+            user: decoded.userId,
+            userAction: 'Deleted User: ' + user.userName,
+            date: new Date().toLocaleDateString(),
+            time: new Date().toLocaleTimeString()
+        });
+
+        // Save the activity log
+        await log.save();
+
+        // Return success message
+        return res.status(200).json({ message: 'User deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Failed to delete user' });
+    }
+});
 
 
 export default router;
