@@ -23,9 +23,9 @@ router.delete('/api/logs', adminOnly, async (req, res) => {
       let totalLogs = await ActivityLog.countDocuments();
 
       // If there are more than 20 logs, delete the old ones
-      if (totalLogs > 20) {
+      if (totalLogs > 1000) {
           // Get the number of logs to delete
-          let logsToDeleteCount = totalLogs - 20;
+          let logsToDeleteCount = totalLogs - 1000;
 
           // Get the logs to delete
           let logsToDelete = await ActivityLog.find().limit(logsToDeleteCount);

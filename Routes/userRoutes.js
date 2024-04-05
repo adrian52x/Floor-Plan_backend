@@ -190,5 +190,51 @@ router.delete('/api/user/:id', adminOnly, async (req, res) => {
     }
 });
 
+router.put('/api/user/pwd/:id', adminOnly, async (req, res) => {
+    // Get user ID from params
+    const { id } = req.params;
+
+    // Get the old password, new password, and confirmation password from the request body
+    const { oldPassword, newPassword, confirmNewPassword } = req.body;
+
+    // Check if the new password and confirmation password are the same
+    if (newPassword !== confirmNewPassword) {
+        return res.status(400).json({ message: 'New password and confirmation password do not match' });
+    }
+
+    // Check if the user is trying to update their own password
+    const token = req.headers.authorization;
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    console.log(decoded.userId);
+    if (decoded.userId !== id) {
+        return res.status(403).json({ message: 'You can only update your own password' });
+    }
+
+
+    // Find the user
+    const user = await User.findById(id);
+
+    // If no user was found, return 404
+    if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check if the old password matches the current password
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+        return res.status(400).json({ message: 'Old password is incorrect' });
+    }
+
+    //Encrypt user password
+    const encryptedNewPassword = await bcrypt.hash(newPassword, 10);
+
+    // Find the user and update their password
+    const updatedUser = await User.findByIdAndUpdate(id, { password: encryptedNewPassword }, { new: true });
+
+
+    // Return the updated user
+    res.json(updatedUser);
+});
+
 
 export default router;
